@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "strictPropertyInitialization": false,
+    "allowJs": true,
+    "strict": true,
+    "target": "es6",
+    "module": "es6",
+    "esModuleInterop": true,
+    "rootDir": "./",
+    "outDir": "dist",
+    "moduleResolution": "node",
+    "noEmitOnError": true,
+    "typeRoots": [ "node_modules/@types" ],
+    "sourceMap": true,            // Include source maps by default
+    "inlineSources": true         // Embed source code in the source map
+  },
+  "exclude": [
+    "node_modules",
+    "dist"
+  ],
+  "include": [
+    "src/**/*"
+  ],
+  "compileOnSave": false,
+  "angularCompilerOptions": {
+    "fullTemplateTypeCheck": true,
+    "strictInjectionParameters": true
+  },
+  "references": []
+}

@@ -1,0 +1,116 @@
+{
+    "extensionName": {
+        "message": "Multi-clerc",
+        "description": ""
+    },
+    "description": {
+        "message": "Gérer plusieurs consoles d'enchères live en même temps",
+        "description": ""
+    },
+    "bidButton": {
+        "message": "Enchérir (Enter)",
+        "description": ""
+    },
+    "removeLastBidButton": {
+        "message": "Annuler l'enchère (-)",
+        "description": ""
+    },
+    "nextBidAmountSuggestionButton": {
+        "message": "Enchérir $AMOUNT$ (+)",
+        "description": "",
+        "placeholders": {
+            "AMOUNT": {
+                "content": "$1",
+                "example": ""
+            }
+        }
+    },
+    "globalKillSwitchLabel": {
+        "message": "Extension ON / OFF (k)",
+        "description": ""
+    },
+    "nextBidAmountSuggestionButtonEmpty": {
+        "message": "Enchérir -",
+        "description": ""
+    },
+    "setStartingPriceButton": {
+        "message": "Mise à prix (s)",
+        "description": ""
+    },
+    "setIncrementButton": {
+        "message": "Modifier l'incrément (.)",
+        "description": ""    
+    },
+    "unsoldLotButton": {
+        "message": "Lot invendu (/)",
+        "description": ""
+    },
+    "adjudicateButton": {
+        "message": "Adjuger (*)",
+        "description": ""
+    },
+    "sendFairWarningButton": {
+        "message": "Message Enchérissez rapidement (m)",
+        "description": ""
+    },
+    "validateAdjudicationButton": {
+        "message": "Adjuger (*/Enter)",
+        "description": ""
+    },
+    "cancelAdjudicationButton": {
+        "message": "Annuler (-)",
+        "description": ""
+    },
+    "fixedIncrementButton": {
+        "message": "Incrément fixe (./Enter)",
+        "description": ""
+    },
+    "autoIncrementButton": {
+        "message": "Incrément auto (/)",
+        "description": ""
+    },
+    "cancelIncrementButton": {
+        "message": "Annuler (-)",
+        "description": ""
+    },
+    "TabStatusStartingPrice": {
+        "message": "Mise à prix : $AMOUNT$",
+        "description": "",
+        "placeholders": {
+            "AMOUNT": {
+                "content": "$1",
+                "example": ""
+            }
+        }
+    },
+    "TabStatusSuggestedNextBid": {
+        "message": "prochaine enchère : $AMOUNT$",
+        "description": "",
+        "placeholders": {
+            "AMOUNT": {
+                "content": "$1",
+                "example": ""
+            }
+        }
+    },
+    "TabStatusBidWithOriginLocal": {
+        "message": "Salle $AMOUNT$",
+        "description": "",
+        "placeholders": {
+            "AMOUNT": {
+                "content": "$1",
+                "example": ""
+            }
+        }
+    },
+    "TabStatusBidWithOriginLive": {
+        "message": "Live $AMOUNT$",
+        "description": "",
+        "placeholders": {
+            "AMOUNT": {
+                "content": "$1",
+                "example": ""
+            }
+        }
+    }
+}

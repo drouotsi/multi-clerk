@@ -1,0 +1,69 @@
+#adjudicationPopupContainer {
+  display: none;
+  flex-direction: column;
+  border: 2px solid white;
+  margin-top: 10px;
+  border-radius: 20px;
+  margin-bottom: 5px;
+}
+
+#adjudicationStatusContainer {
+  width: 550px;
+  max-height: 300px;
+  overflow-y: scroll;
+  overflow: hidden;
+  align-self: center;
+}
+
+#adjudicationActions {
+  display: flex;
+  margin: 18px;
+}
+
+#validateAdjudicationButton {
+  margin-right: 10px;
+}
+
+#cancelAdjudicationButton {
+  margin-left: 10px;
+}
+
+.adjudicationStatusLine {
+  color: white;
+  margin-bottom: 5px;
+  align-items: baseline;
+  display: flex;
+  height: 40px;
+}
+
+.adjudicationStatusSource {
+  font-weight: bolder;
+  width: 110px;
+  min-width: 110px;
+}
+
+.adjudicationStatusCurrentLot {
+  font-weight: bolder;
+  width: 90px;
+  min-width: 90px;
+}
+
+.adjudicationstatusOrigin {
+  width: 110px;
+  min-width: 110px;
+  text-align: left;
+  font-size: larger;
+  margin-left: 50px;
+  white-space: nowrap;
+}
+
+.adjudicationstatusLastAmount{
+  width: 180px;
+  min-width: 180px;
+  text-align: right;
+}
+
+.adjudicationstatusLiveBidderId {
+  text-align: left;
+  font-size: large;
+}

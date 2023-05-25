@@ -1,0 +1,27 @@
+{
+  "name": "clerkkent",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "module": "commonjs",
+  "scripts": {
+    "build": "./buildExtension.sh"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/chrome": "^0.0.228",
+    "copy-webpack-plugin": "^11.0.0",
+    "expose-loader": "^4.1.0",
+    "ts-loader": "^9.4.2",
+    "typescript": "^5.0.4",
+    "webpack": "^5.78.0",
+    "webpack-cli": "^5.0.1"
+  },
+  "dependencies": {
+    "crx": "^5.0.1",
+    "messages": "^0.1.0"
+  }
+}

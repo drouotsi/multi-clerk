@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Notice</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container" id="en">
+        <h1>Privacy Policy</h1>
+        <p>Last updated: April 25th 2023</p>
+        <p>Thank you for using the Multi-Clerk Chrome Extension! This notice describes the information we collect and how
+            we use it.</p>
+        <h2>What information do we collect?</h2>
+        <ul>
+            <li>We collect the URL of live auctions if the user adjudicates a lot using the extension. We also collect the user-agent of the browser. The extension does not collect anything else. It <b>doesn't collect</b> IP addresses, data related to lots, auction amounts, or bids, and it also doesn't collect any data related to bidders' names.</li>
+        </ul>
+        <h2>How do we collect this information?</h2>
+        <ul>
+            <li>We collect this information through an analytics tool (plausible.io).</li>
+        </ul>
+        <h2>Why do we collect this information?</h2>
+        <ul>
+            <li>We collect this information to understand how frequently and for what sale the extension is being used, and to identify
+                any issues with the extension.</li>
+        </ul>
+        <h2>How do we use this information?</h2>
+        <ul>
+            <li>This information is used only for metrics purposes and issue detection, and is not directly used by the extension.</li>
+        </ul>
+        <h2>Will this information be shared with third parties?</h2>
+        <ul>
+            <li>No.</li>
+        </ul>
+        <h2>What data is shared with third parties?</h2>
+        <ul>
+            <li>None.</li>
+        </ul>
+        <h2>How long do we store the data?</h2>
+        <ul>
+            <li>The URLs are stored 3 years.</li>
+        </ul>
+        <h2>How do we protect this information?</h2>
+        <ul>
+            <li>We implement appropriate security measures to protect this data from unauthorized access or disclosure
+                by restricting the access to the plausible account.</li>
+        </ul>
+        <h2>How can users access, modify, or delete this information?</h2>
+        <ul>
+            <li>Users cannot access, modify, or delete this information. For any information regarding this extension, please contact info@drouot.com.</li>
+        </ul>
+        <div class="footer">
+            <p>Multi-Clerk 2023</p>
+            <p><a href="#" onclick="switchLanguage('fr')">Français</a> | English</p>
+        </div>
+    </div>
+    <div class="container" id="fr" style="display: none;">
+        <h1>Politique de confidentialité</h1>
+        <p>Dernière mise à jour : 25 avril 2023</p>
+        <p>Merci d'utiliser l'extension Multi-Clerk ! Cet politique de confidentialité décrit les informations que nous collectons et
+            comment nous les utilisons.</p>
+        <h2>Quelles informations collectons-nous ?</h2>
+        <ul>
+            <li>Nous collectons l'URL des enchères live que l'utilisateur administre depuis l'extension au moment ou celui-ci adjudge le premier lot d'une vente. L'extension ne collecte rien d'autre. Elle <b>ne collècte pas</b> les adresses IP, les données liées aux lots, aux montant des enchères et adjudications, elle ne collècte pas non plus de données liées aux noms des enchérisseurs.</li>
+        </ul>
+        <h2>Comment collectons-nous ces informations ?</h2>
+        <ul>
+            <li>Nous collectons ces informations via un outil analytics (plausible.io).</li>
+        </ul>
+        <h2>Pourquoi collectons-nous ces informations ?</h2>
+        <ul>
+            <li>Nous collectons ces informations pour comprendre la fréquence d'utilisation de l'extension, et pour
+                identifier tout problème soudain avec l'extension.</li>
+        </ul>
+        <h2>Comment utilisons-nous ces informations ?</h2>
+        <ul>
+            <li>Ces informations sont utilisées uniquement à des fins de métriques et de détection d'erreurs et ne sont pas directement utilisées
+                par l'extension.</li>
+        </ul>
+        <h2>Ces informations seront-elles partagées avec des tiers ?</h2>
+        <ul>
+            <li>Non.</li>
+        </ul>
+        <h2>Quelles données sont partagées avec des tiers ?</h2>
+        <ul>
+            <li>Aucune.</li>
+        </ul>
+        <h2>Combien de temps sont sauvegardées les données</h2>
+        <ul>
+            <li>Les urls sont sauvegardées 3 ans.</li>
+        </ul>
+        <h2>Comment protégeons-nous ces informations ?</h2>
+        <ul>
+            <li>Nous mettons en place des mesures de sécurité appropriées pour protéger ces données contre tout accès ou
+                divulgation non autorisé en restreignant l'accès au compte plausible.</li>
+        </ul>
+        <h2>Comment les utilisateurs peuvent-ils accéder, modifier ou supprimer ces informations ?</h2>
+        <ul>
+            <li>Les utilisateurs ne peuvent pas accéder, modifier ou supprimer ces informations. Pour toute information au sujet de l'extension, merci de contacter info@drouot.com.</li>
+        </ul>
+        <div class="footer">
+            <p>Multi-Clerk 2023</p>
+            <p>Français | <a href="#" onclick="switchLanguage('en')">English</a></p>
+        </div>
+    </div>
+    <script>
+        function switchLanguage(lang) {
+            if (lang === 'fr') {
+                document.getElementById('en').style.display = 'none';
+                document.getElementById('fr').style.display = 'block';
+            } else {
+                document.getElementById('en').style.display = 'block';
+                document.getElementById('fr').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+
+</html>

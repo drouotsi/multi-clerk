@@ -1,0 +1,39 @@
+#incrementContainer {
+  display: none;
+  flex-direction: column;
+  border: 2px solid white;
+  margin-top: 10px;
+  border-radius: 20px;
+  margin-bottom: 5px;
+}
+
+#incrementActions {
+  display: flex;
+  margin: 18px;
+}
+
+#incrementInput {
+  width: 100%;
+  max-width: 110px;
+  margin-right: 10px;
+}
+
+#fixedIncrementButton {
+  width: 100%;
+  max-width: 200px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+#autoIncrementButton {
+  width: 100%;
+  max-width: 200px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+#cancelIncrementButton {
+  width: 100%;
+  max-width: 150px;
+  margin-left: 10px;
+}

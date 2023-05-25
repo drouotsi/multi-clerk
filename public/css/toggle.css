@@ -1,0 +1,121 @@
+.toggleContainerSource {
+    width: 60px;
+}
+
+.toggleContainerNotSource {
+    width: 60px;
+    margin-bottom: 1px;
+}
+
+#switch {
+    position: relative;
+    top: 41%;
+    left: 56%;
+    transform: translate(-50%, -50%);
+    width: 56.25px;
+    /* Reduced by 25% */
+    height: 30px;
+    /* Reduced by 25% */
+}
+.toggle-obj {
+    position: relative;
+    border: 2px solid #af5f5f;
+    /* Reduced by 25% */
+    border-radius: 15px;
+    /* Reduced by 25% */
+    transition: border-color 0.6s ease-out;
+    box-sizing: border-box;
+}
+
+.toggle-obj.toggle-on {
+    border-color: rgba(137, 194, 217, 0.4);
+    border: 2px solid white;
+    transition: all 0.5s 0.15s ease-out;
+}
+
+.toggle-button {
+    position: absolute;
+    top: 2px;
+    width: 23px;
+    bottom: 2px;
+    right: 27.25px;
+    background-color: #af5f5f;
+    border-radius: 14.25px;
+    cursor: pointer;
+    transition: all 0.3s 0.1s, width 0.1s, top 0.1s, bottom 0.1s;
+}
+
+.toggle-on .toggle-button {
+    top: 2px;
+    height: 22px;
+    width: 48px;
+    bottom: 1.5px;
+    right: 2px;
+    border-radius: 14.25px;
+    background-color: white;
+    box-shadow: 0 0 12px white;
+    transition: all 0.2s 0.1s, right 0.1s;
+}
+
+.toggle-text-on,
+.toggle-text-off {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    line-height: 27px;
+    /* Reduced by 25% */
+    text-align: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+.toggle-text-on {
+    left: 0;
+    right: 0;
+    font-size: 13.5px;
+    /* Reduced by 25% */
+    font-weight: normal;
+    color: rgba(0, 0, 0, 0);
+    transition: color 0.3s 0.15s;
+}
+
+.toggle-on .toggle-text-on {
+    color: black;
+}
+
+.toggle-text-off {
+    right: 4.5px;
+    /* Reduced by 25% */
+    font-size: 10.5px;
+    /* Reduced by 25% */
+    font-weight: bold;
+    color: #af5f5f;
+}
+
+.toggle-on .toggle-text-off {
+    color: black;
+}
+
+.glow-comp {
+    position: absolute;
+    opacity: 0;
+    top: 7.5px;
+    /* Reduced by 25% */
+    bottom: 7.5px;
+    /* Reduced by 25% */
+    left: 7.5px;
+    /* Reduced by 25% */
+    right: 7.5px;
+    /* Reduced by 25% */
+    border-radius: 4.5px;
+    /* Reduced by 25% */
+    background-color: rgba(75, 122, 141, 0.1);
+    box-shadow: 0 0 9px rgba(75, 122, 141, 0.2);
+    /* Reduced by 25% */
+    transition: opacity 4.5s 1s;
+}
+
+.toggle-on .glow-comp {
+    opacity: 1;
+    transition: opacity 1s;
+}

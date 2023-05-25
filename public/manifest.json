@@ -1,0 +1,78 @@
+{
+  "manifest_version": 3,
+  "name": "__MSG_extensionName__",
+  "version": "##VERSION##",
+  "description": "__MSG_description__",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "permissions": [
+    "tabs",
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://cyberdrouot-recette.zonesecure.org/cyberclerc/*",
+    "https://cyberdrouot.zonesecure.org/cyberclerc/*",
+    "https://cybermoniteur.zonesecure.org/cyberclerc/*",
+    "https://pro.interencheres.com/operateurs-*"
+  ],
+  "background": {
+    "service_worker": "clerkkent.js"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "default_locale": "en",
+  "content_scripts": [
+    {
+      "matches": [
+        "https://cyberdrouot-recette.zonesecure.org/cyberclerc/*"
+      ],
+      "js": [
+        "drouot.js",
+        "content.js"
+      ]
+    },
+    {
+      "matches": [
+        "https://cyberdrouot.zonesecure.org/cyberclerc/*"
+      ],
+      "js": [
+        "drouot.js",
+        "content.js"
+      ]
+    },
+    {
+      "matches": [
+        "https://cybermoniteur.zonesecure.org/cyberclerc/*"
+      ],
+      "js": [
+        "drouot.js",
+        "content.js"
+      ]
+    },
+    {
+      "matches": [
+        "https://pro.interencheres.com/operateurs-*"
+      ],
+      "js": [
+        "ie.js",
+        "content.js"
+      ]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "/_locales/*",
+        "/icons/*"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ]
+}

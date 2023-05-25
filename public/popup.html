@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Clerk Kent</title>
+  <script src="popup.js"></script>
+  <link rel="stylesheet" href="css/popup.css">
+  <link rel="stylesheet" href="css/tabs-status.css">
+  <link rel="stylesheet" href="css/toggle.css">
+  <link rel="stylesheet" href="css/adjudication.css">
+  <link rel="stylesheet" href="css/increment.css">
+</head>
+
+<body>
+  <div id="statusContainer">
+  </div>
+  <div id="actionsContainer">
+    <div class="left-column">
+      <div class="first-row">
+        <input type="number" id="amountInput" min="0" step="1">
+        <button id="bidButton" class="primaryButton"></button>
+      </div>
+      <div class="buttons-row">
+        <button id="removeLastBidButton" class="primaryButton"></button>
+        <button id="nextBidAmountSuggestionButton" class="primaryButton"></button>
+      </div>
+      <div class="buttons-row">
+        <button id="setStartingPriceButton" class="primaryButton"></button>
+      </div>
+      <div class="buttons-row">
+        <button id="setIncrementButton" class="primaryButton"></button>
+      </div>
+    </div>
+    <div class="right-column">
+      <div id="globalkillSwitchContainer">
+        <div id="globalKillSwitchLabelContainer">
+          <span id="globalKillSwitchLabel"></span>
+        </div>
+        <div id="globalKillSwitch">
+          <div class="toggle-obj" id="switch">
+            <div class="toggle-text-off">OFF</div>
+            <div class="glow-comp"></div>
+            <div class="toggle-button"></div>
+            <div class="toggle-text-on">ON</div>
+          </div>
+        </div>
+      </div>
+      <button id="adjudicateButton" class="primaryButton"></button>
+      <button id="unsoldLotButton" class="primaryButton"></button>
+      <button id="sendFairWarningButton" class="primaryButton"></button>
+    </div>
+  </div>
+  <div id="adjudicationPopupContainer">
+    <div id="adjudicationActions">
+      <button id="validateAdjudicationButton" class="primaryButton"></button>
+      <button id="cancelAdjudicationButton" class="primaryButton"></button>
+    </div>
+    <div id="adjudicationStatusContainer"></div>
+  </div>
+  <div id="incrementContainer">
+    <div id="incrementActions">
+      <input type="number" id="incrementInput" min="0" step="1">
+      <button id="fixedIncrementButton" class="primaryButton"></button>
+      <button id="autoIncrementButton" class="primaryButton"></button>
+      <button id="cancelIncrementButton" class="primaryButton"></button>
+    </div>
+  </div>
+</body>
+
+</html>

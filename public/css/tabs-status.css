@@ -1,0 +1,124 @@
+#statusContainer {
+  margin-top: 20px;
+  margin-left: 20px;
+  margin-right: 20px;
+  max-height: 300px;
+  overflow: hidden;
+}
+
+.statusLine {
+  margin-bottom: 5px;
+  display: flex;
+  width: 100%;
+  height: 35px;
+  padding-top:2px;
+}
+
+.statusLineLabelContainer{
+  color: white;
+  margin-bottom: 5px;
+  align-items: baseline;
+  display: inherit;
+  height: 30px;
+  line-height: 30px;
+  width: 475px;
+  min-width: 475px;
+
+}
+
+.statusSource {
+  font-weight: bolder;
+  width: 110px;
+  min-width: 110px;
+}
+
+.statusCurrentLot {
+  font-weight: bolder;
+  width: 90px;
+  min-width: 90px;
+}
+
+.statusOriginContainer {
+  width: 110px;
+  min-width: 110px;
+}
+.statusOrigin {
+  padding:8px;
+  white-space: nowrap; 
+  text-align: left;
+  font-size: larger;
+}
+
+.statusOrigin.LIVE {
+  background-color: #af5f5f;
+  border-radius: 15px;
+}
+
+.statusLiveBidderId {
+  text-align: left;
+  font-size: small;
+}
+
+.statusLastAmount {
+  width: 180px;
+  min-width: 180px;
+  text-align: right;
+  font-weight: bolder;
+  font-size: x-large;
+}
+
+.statusSuggestedBidContainerSource {
+  width: 175px;
+  min-width: 175px;
+  text-align: right;
+  padding-top:4px;
+  display: inline-block;
+}
+.statusSuggestedBidContainerNotSource {
+  width: 175px;
+  min-width: 175px;
+  text-align: right;
+  display: inline-block;
+}
+
+.statusNextBidAmountSuggestionSource {
+  background-color: white;
+  border-radius: 20px;
+  border: 2px solid white;
+  color: #000000;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 5px 12px;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.statusNextBidAmountSuggestionNotSource {
+  background-color: #000000;
+  border-radius: 20px;
+  border: 2px solid white;
+  color: white;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 5px 12px;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.statusNextBidAmountSuggestionNotSource:hover {
+  background-color: #af5f5f;
+}
+
+.gotoIcon {
+  width: 30px;
+  margin-left: 6px;
+  /* This is so that the hover looks nice */
+  border-radius: 18px;
+  height: 28px;
+}
+.gotoIcon:hover {
+  background-color: #af5f5f;
+}

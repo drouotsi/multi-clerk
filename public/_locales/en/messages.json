@@ -1,0 +1,102 @@
+{
+    "extensionName": {
+        "message": "Multi-clerk",
+        "description": ""
+    },
+    "description": {
+        "message": "Manage several live platforms at the same time",
+        "description": ""
+    },
+    "bidButton": {
+        "message": "Bid (Enter)",
+        "description": ""
+    },
+    "removeLastBidButton": {
+        "message": "Cancel bid (-)",
+        "description": ""
+    },
+    "nextBidAmountSuggestionButton": {
+        "message": "Bid $AMOUNT$ (+)",
+        "description": "",
+        "placeholders": {
+            "AMOUNT": {
+                "content": "$1",
+                "example": ""
+            }
+        }
+    },
+    "globalKillSwitchLabel": {
+        "message": "Extension ON / OFF (k)",
+        "description": ""
+    },
+    "nextBidAmountSuggestionButtonEmpty": {
+        "message": "Bid -",
+        "description": ""
+    },
+    "setStartingPriceButton": {
+        "message": "Set Starting Price (s)",
+        "description": ""
+    },
+    "setIncrementButton": {
+        "message": "Set Increment (.)",
+        "description": ""    
+    },
+    "unsoldLotButton": {
+        "message": "Unsold lot (/)",
+        "description": ""
+    },
+    "adjudicateButton": {
+        "message": "Adjudicate (*)",
+        "description": ""
+    },
+    "sendFairWarningButton": {
+        "message": "Message \" Fair Warning \" (m)",
+        "description": ""
+    },
+    "validateAdjudicationButton": {
+        "message": "Adjudicate (*/Enter)",
+        "description": ""
+    },
+    "cancelAdjudicationButton": {
+        "message": "Cancel (-)",
+        "description": ""
+    },
+    "fixedIncrementButton": {
+        "message": "Fixed increment (./Enter)",
+        "description": ""
+    },
+    "autoIncrementButton": {
+        "message": "Auto increment (/)",
+        "description": ""
+    },
+    "cancelIncrementButton": {
+        "message": "Cancel (-)",
+        "description": ""
+    },
+    "incrementInputPlaceholder": {
+        "message": "fixed increment",
+        "description": ""
+    },
+    "TabStatusStartingPrice": {
+        "message": "Starting price",
+        "description": ""
+    },
+    "TabStatusSuggestedNextBid": {
+        "message": "next bid : $AMOUNT$",
+        "description": "",
+        "placeholders": {
+            "AMOUNT": {
+                "content": "$1",
+                "example": ""
+            }
+        }
+    },
+    "TabStatusBidWithOriginLocal": {
+        "message": "Floor",
+        "description": ""
+    },
+    "TabStatusBidWithOriginLive": {
+        "message": "Live",
+        "description": ""
+    }
+}
