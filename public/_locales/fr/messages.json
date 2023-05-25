@@ -84,7 +84,7 @@
         }
     },
     "TabStatusSuggestedNextBid": {
-        "message": "prochaine enchère : $AMOUNT$",
+        "message": "proposé : $AMOUNT$",
         "description": "",
         "placeholders": {
             "AMOUNT": {
