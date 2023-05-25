@@ -1,0 +1,4 @@
+/node_modules
+/dist
+/production
+package-lock.json
