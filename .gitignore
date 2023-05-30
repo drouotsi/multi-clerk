@@ -2,3 +2,4 @@
 /dist
 /production
 package-lock.json
+dist.pem
