@@ -48,6 +48,13 @@ const stopObservingElements = () => {
   }
 };
 
+// Function to stop observing the target element for changes
+const updateObserveringElements = () => {
+  stopObservingElements();
+  lastBidChangedElementToWatch= connector.getBidActivityElementToWatch();
+  startObservingElements();
+};
+
 // Initializing currentTabStatus
 var currentTabStatus = getCurrentTabStatus();
 
@@ -68,12 +75,15 @@ window.forceTabUpdate = sendTabUpdateMessage(true);
 
 // sendTabUpdateMessage will send a tabUpdate message if the tabStatus has changed
 // By setting force to true, the tabUpdate will be sent even if the tabStatus is unchanged
-function sendTabUpdateMessage(force?: boolean) {
+function sendTabUpdateMessage(force?: boolean, refreshObserverOnChange?: boolean) {
   let statusChanged = false;
 
   // Call the function to send event to the background script
   var tabUpdateMessage = getCurrentTabStatus();
   statusChanged = statusHasChanged(tabUpdateMessage);
+  if (statusChanged && refreshObserverOnChange) {
+    updateObserveringElements();
+  }
   if (force || statusChanged) {
     currentTabStatus = tabUpdateMessage;
     try {
@@ -102,7 +112,7 @@ function getCurrentTabStatus(): Messages.TabUpdate {
 // If the status of the tab has changed, we send the updated status, otherwise we send a ping
 // This handles changes in the next suggested bid changed by user directly inside a platform
 function sendPingMessage() {
-  const statusChanged = sendTabUpdateMessage(false);
+  const statusChanged = sendTabUpdateMessage(false, true);
   if (!statusChanged) {
     var pingMessage = new Messages.Ping(
       Messages.Endpoints.Context,
