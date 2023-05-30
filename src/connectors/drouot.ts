@@ -2,10 +2,18 @@ import { Toolbox } from '../content/toolbox';
 import { Connector } from '../interfaces/interface';
 import { BidOrigin } from "../shared/types";
 
+// Value in the bidType div
+const FLOOR_LABEL = 'ROOM';
+const LIVE_LABEL = 'LIVE';
+const STATUT_ENCHERE = 'enchere';
+const STATUT_MAP = 'map';
+
+// Usefull for detecting if a bid in the bidList is an actual bid
 const FRENCH_FLOOR_LABEL = 'Salle'
 const ENGLISH_FLOOR_LABEL = 'Auction room ';
 const FRENCH_LIVE_LABEL = 'Internet -'
 const ENGLISH_LIVE_LABEL = 'Internet'
+
 
 
 class DrouotConnector implements Connector {
@@ -13,6 +21,11 @@ class DrouotConnector implements Connector {
 
     private amountInput: HTMLInputElement | null = null;
     private bidList: HTMLElement | null = null;
+    private currentAmount: HTMLInputElement | null = null;
+    private lastBidderId: HTMLInputElement | null = null;
+    private bidType: HTMLInputElement | null = null;
+    private statut: HTMLInputElement | null = null;
+
     constructor() {
 
         setTimeout(() => {
@@ -35,17 +48,36 @@ class DrouotConnector implements Connector {
             if (!this.amountInput) {
                 throw new Error('No input found with css class name containing style__Input and having parent of parent with class ContainerBoutonLeft');
             }
+            this.currentAmount = Toolbox.getElementBySelector("#currentAmount") as HTMLInputElement;
+            if (!this.currentAmount) {
+                throw new Error('No input found with id currentAmount');
+            }
+            this.lastBidderId = Toolbox.getElementBySelector("#lastBidderId") as HTMLInputElement;
+            if (!this.currentAmount) {
+                throw new Error('No input found with id lastBidderId');
+            }
+            this.bidType = Toolbox.getElementBySelector("#bidType") as HTMLInputElement;
+            if (!this.currentAmount) {
+                throw new Error('No input found with id bidType');
+            }
+            this.statut = Toolbox.getElementBySelector("#statut") as HTMLInputElement;
+            if (!this.currentAmount) {
+                throw new Error('No input found with id statut');
+            }
+            this.bidList = <HTMLElement>Toolbox.findFirstElementByClassNameContainingString("style__ColBidAuction")?.getElementsByTagName('div')[0].getElementsByTagName('div')[2].getElementsByTagName('div')[0];
+            if (!this.bidList) {
+                throw new Error('the bid list to watch was not found');
+            }
         }, 500);
     }
 
     getCurentStartingPrice(): number | undefined {
-        if (this.bidList) {
-            let lastDiv = Toolbox.getLastDirectChildWithTagName(this.bidList, 'DIV');
-            if (lastDiv) {
-                const startingPriceAmount = Toolbox.findLastElementByClassNameContainingString("StartingPriceItem__Amount", lastDiv)?.getElementsByTagName('span')[0].getElementsByTagName('span')[0];
-                if (startingPriceAmount) {
-                    return parseInt(Toolbox.extractDigitsFromString(startingPriceAmount.innerHTML).replace(/\s/g, ''));
+        if (this.statut) {
+            if (this.statut.value === STATUT_MAP && this.currentAmount) {
+                if (!this.currentAmount.value) {
+                    return 0;
                 }
+                return parseInt(Toolbox.extractDigitsFromString(this.currentAmount.value).replace(/\s/g, ''));
             }
         }
         return undefined;
@@ -86,6 +118,9 @@ class DrouotConnector implements Connector {
 
     elementIsBid(element: HTMLElement) {
         return Toolbox.findFirstElementByClassNameContainingString("BidItem__Text", element) != null
+    }
+    elementIsLotChange(element: HTMLElement) {
+        return Toolbox.findFirstElementByClassNameContainingString("LotItem", element) != null
     }
 
     elementBidMatches(element: HTMLElement, origin: BidOrigin, amount: number): boolean {
@@ -130,8 +165,13 @@ class DrouotConnector implements Connector {
                         climbingBid = Toolbox.getPreviousSibling(climbingBid) as HTMLDivElement;
                     }
                 } else {
-                    console.error("bid not found for adjudication");
-                    break;
+                    if (this.elementIsLotChange(climbingBid)) {
+                        console.error("bid not found for adjudication");
+                        break;
+                    } else {
+                        climbingBid = Toolbox.getPreviousSibling(climbingBid) as HTMLDivElement;
+                    }
+                    
                 }
             }
         }
@@ -154,36 +194,25 @@ class DrouotConnector implements Connector {
     }
 
     getBidActivityElementToWatch(): HTMLElement {
-        this.bidList = <HTMLElement>Toolbox.findFirstElementByClassNameContainingString("style__ColBidAuction")?.getElementsByTagName('div')[0].getElementsByTagName('div')[2].getElementsByTagName('div')[0];
-        if (this.bidList) {
-            return this.bidList;
+        let extensionDiv = Toolbox.getElementBySelector("#extensionInputs");
+        if (extensionDiv) {
+            return extensionDiv;
         }
-        throw new Error('the bid list to watch was not found');
+        throw new Error('the extensionDiv was not found');
     }
 
     getLastBidOrigin(): BidOrigin | undefined {
-        if (this.bidList) {
-            let lastDiv = Toolbox.getLastDirectChildWithTagName(this.bidList, 'DIV');
-            if (lastDiv) {
-                let originSpan = Toolbox.findLastElementByClassNameContainingString("BidItem__Text", lastDiv)?.getElementsByTagName('span')[0];
-                if (!originSpan) {
-                    return undefined;
-                }
-                if (originSpan.innerHTML) {
-                    switch (originSpan.innerHTML) {
-                        case FRENCH_FLOOR_LABEL:
-                        case ENGLISH_FLOOR_LABEL: {
 
-                            return BidOrigin.Local;
-                        }
-                        case FRENCH_LIVE_LABEL:
-                        case ENGLISH_LIVE_LABEL: {
-                            return BidOrigin.Live;
-                        }
-                        default: {
-                            return undefined;
-                        }
-                    }
+        if (this.statut && this.statut.value !== "map" && this.bidType) {
+            switch (this.bidType.value) {
+                case FLOOR_LABEL: {
+                    return BidOrigin.Local;
+                }
+                case LIVE_LABEL: {
+                    return BidOrigin.Live;
+                }
+                default: {
+                    return undefined;
                 }
             }
         }
@@ -191,17 +220,11 @@ class DrouotConnector implements Connector {
     }
 
     getLastBidAmount(): number | undefined {
-        if (this.bidList) {
-            let lastDiv = Toolbox.getLastDirectChildWithTagName(this.bidList, 'DIV');
-            if (lastDiv) {
-                let amountDiv = Toolbox.findLastElementByClassNameContainingString("BidItem__Amount", lastDiv)
-                if (amountDiv) {
-                    let amountSpan = Toolbox.getLastDirectChildWithTagName(Toolbox.getLastDirectChildWithTagName(amountDiv, 'SPAN'), 'SPAN');
-                    if (amountSpan?.innerHTML.length && amountSpan?.innerHTML.length >= 0) {
-                        return parseInt(Toolbox.extractDigitsFromString(amountSpan.innerHTML));
-                    }
-                }
-            }
+        if ((this.statut?.value === STATUT_ENCHERE || this.statut?.value === STATUT_MAP) && this.currentAmount && !this.currentAmount.value) {
+            return 0;
+        }
+        if ((this.statut?.value === STATUT_ENCHERE || this.statut?.value === STATUT_MAP ) && this.currentAmount && this.currentAmount.value) {
+            return parseInt(Toolbox.extractDigitsFromString(this.currentAmount.value));
         }
         return undefined;
     }
@@ -255,17 +278,16 @@ class DrouotConnector implements Connector {
         }
     }
 
-    setIncrementToFixValue(value : number): void {
-        console.log("trying to set fixed increment in drouot connector")
-        const incrementPossibleValues = [10,20,25,50,100,200,500,1000,2000,3000,5000,10000,50000];
-        var closest = incrementPossibleValues.reduce(function(prev, curr) {
+    setIncrementToFixValue(value: number): void {
+        const incrementPossibleValues = [10, 20, 25, 50, 100, 200, 500, 1000, 2000, 3000, 5000, 10000, 50000];
+        var closest = incrementPossibleValues.reduce(function (prev, curr) {
             return (Math.abs(curr - value) < Math.abs(prev - value) ? curr : prev);
-          });
-          
-          const option = Toolbox.findOptionByValue(closest.toString());
-          if (option) {
+        });
+
+        const option = Toolbox.findOptionByValue(closest.toString());
+        if (option) {
             const selectElement = option.parentElement as HTMLSelectElement;
-            option.selected = true; 
+            option.selected = true;
             const event = new Event('change', { bubbles: true });
             selectElement.dispatchEvent(event);
         }
@@ -275,23 +297,15 @@ class DrouotConnector implements Connector {
         let StandardStepElmt = Toolbox.findFirstElementIncludingInnerHTML("span", "Standard", document)?.parentElement?.parentElement;
         if (StandardStepElmt) {
             Toolbox.findFirstElementByClassNameContainingString("IncrementButton", StandardStepElmt)?.click();
-        } else {
-            console.log("StandardStepElmt not found")
         }
     }
 
-    getLastLiveBidderId(): string | undefined{
+    getLastLiveBidderId(): string | undefined {
         if (this.getLastBidOrigin() !== BidOrigin.Live) {
             return undefined;
         }
-        if (this.bidList) {
-            let lastDiv = Toolbox.getLastDirectChildWithTagName(this.bidList, 'DIV');
-            if (lastDiv) {
-                let userIdSpan = Toolbox.findLastElementByClassNameContainingString("BidItem__Text", lastDiv)?.getElementsByTagName('span')[1];
-                if (userIdSpan) {
-                    return userIdSpan.innerHTML;
-                }
-            }  
+        if (this.lastBidderId) {
+            return this.lastBidderId.value;
         }
         return undefined;
     }

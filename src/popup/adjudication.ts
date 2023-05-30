@@ -46,7 +46,6 @@ function generateAdjudicationStatusElement(urlPrefix: string,
   } else {
     origin = getI18nMsg('TabStatusBidWithOriginLocal');
   }
-
   const lastAmount = tabBiddingData.lastAmount ? numberWithSeparator(tabBiddingData.lastAmount, ' ') : "";
   const currentLot = tabBiddingData.currentLot ? tabBiddingData.currentLot: "";
 

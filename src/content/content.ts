@@ -13,7 +13,8 @@ if (!connector) {
 
 // Initializing observers 
 
-const lastBidChangedElementToWatch = connector.getBidActivityElementToWatch();
+let  lastBidChangedElementToWatch : HTMLElement | undefined;
+
 let lastBidObserver = new MutationObserver(() => {
   sendTabUpdateMessage(false);
 });
@@ -22,7 +23,7 @@ let lastBidObserver = new MutationObserver(() => {
 const startObservingElements = () => {
   // Set up the MutationObserver to watch for changes in the last bid
   if (lastBidChangedElementToWatch) {
-    lastBidObserver.observe(lastBidChangedElementToWatch, { attributes: true, childList: true, characterData: true });
+    lastBidObserver.observe(lastBidChangedElementToWatch, { attributes: true, childList: true, characterData: true, subtree: true });
   } else {
     throw new Error('the getBidActivityElementToWatch method of the connector does not return an HTML element.');
   }
@@ -69,7 +70,7 @@ window.forceTabUpdate = sendTabUpdateMessage(true);
 // By setting force to true, the tabUpdate will be sent even if the tabStatus is unchanged
 function sendTabUpdateMessage(force?: boolean) {
   let statusChanged = false;
-  
+
   // Call the function to send event to the background script
   var tabUpdateMessage = getCurrentTabStatus();
   statusChanged = statusHasChanged(tabUpdateMessage);
@@ -85,7 +86,7 @@ function sendTabUpdateMessage(force?: boolean) {
 }
 
 // getCurrentTabStatus uses the connector functions to get the current tabStatus
-function getCurrentTabStatus() : Messages.TabUpdate{
+function getCurrentTabStatus(): Messages.TabUpdate {
   return new Messages.TabUpdate(
     Messages.Endpoints.Context,
     Messages.Endpoints.Background,
@@ -136,8 +137,11 @@ window.forceTabUpdate = () => sendTabUpdateMessage(true);
 // to make sure all elements that need some time to appear on the page are ready
 window.setTimeout(() => sendTabUpdateMessage(), 200);
 
-// Starting observers
-startObservingElements();
+// Starting observers, waiting for 500ms so that all components are loaded
+window.setTimeout(() => {
+  lastBidChangedElementToWatch= connector.getBidActivityElementToWatch();
+  startObservingElements();  
+}, 500);
 
 // Function to be executed before content script is unloaded
 function onContentUnload() {
