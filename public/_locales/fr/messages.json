@@ -73,6 +73,10 @@
         "message": "Annuler (-)",
         "description": ""
     },
+    "incrementInputPlaceholder": {
+        "message": "incrément fixe",
+        "description": ""
+    },
     "TabStatusStartingPrice": {
         "message": "Mise à prix : $AMOUNT$",
         "description": "",
