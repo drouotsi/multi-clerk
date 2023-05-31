@@ -46,6 +46,7 @@ Once Multi-clerk is installed, you can use it by following these steps:
 The extension will enable a user, through a unique interface, to interact with multiple live auction clerking tabs at once from different providers.
 
 The user will be able to :
+
     . place a local bid (physical bid in the sale room)
     . place a suggested bid (an amount comming from a user selected tab source)
     . set the starting price of the current lot at any time
