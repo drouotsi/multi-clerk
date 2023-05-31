@@ -15,7 +15,7 @@ export let currentTabMap: Map<UrlPrefix, Map<number, TabBiddingData>>;
 export function initializeTabTableView(): void {
   const tabsUpdateRequest = new Messages.TabsUpdateRequest(
     Messages.Endpoints.Popup,
-    Messages.Endpoints.Background)
+    Messages.Endpoints.Background);
   chrome.runtime.sendMessage(tabsUpdateRequest);
 }
 

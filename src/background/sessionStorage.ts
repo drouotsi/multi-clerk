@@ -32,12 +32,9 @@ export function isExtensionOn(): Promise<boolean> {
     return new Promise((resolve, reject) => {
         // If nothing is stored, we consider the default behaviour is active
         chrome.storage.session.get(EXTENSION_ON_OFF_STORAGE_KEY, function (result) {
-            console.log("result[EXTENSION_ON_OFF_STORAGE_KEY] :", result[EXTENSION_ON_OFF_STORAGE_KEY]);
             if (result[EXTENSION_ON_OFF_STORAGE_KEY] !== undefined && result[EXTENSION_ON_OFF_STORAGE_KEY] == false) {
-                console.log("res false");
                 resolve(false);
             } else {
-                console.log("res true");
                 resolve(true);
             }
         });

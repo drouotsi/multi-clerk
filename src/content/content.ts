@@ -13,7 +13,8 @@ if (!connector) {
 
 // Initializing observers 
 
-const lastBidChangedElementToWatch = connector.getBidActivityElementToWatch();
+let  lastBidChangedElementToWatch : HTMLElement | undefined;
+
 let lastBidObserver = new MutationObserver(() => {
   sendTabUpdateMessage(false);
 });
@@ -22,7 +23,7 @@ let lastBidObserver = new MutationObserver(() => {
 const startObservingElements = () => {
   // Set up the MutationObserver to watch for changes in the last bid
   if (lastBidChangedElementToWatch) {
-    lastBidObserver.observe(lastBidChangedElementToWatch, { attributes: true, childList: true, characterData: true });
+    lastBidObserver.observe(lastBidChangedElementToWatch, { attributes: true, childList: true, characterData: true, subtree: true });
   } else {
     throw new Error('the getBidActivityElementToWatch method of the connector does not return an HTML element.');
   }
@@ -47,6 +48,13 @@ const stopObservingElements = () => {
   }
 };
 
+// Function to stop observing the target element for changes
+const updateObserveringElements = () => {
+  stopObservingElements();
+  lastBidChangedElementToWatch= connector.getBidActivityElementToWatch();
+  startObservingElements();
+};
+
 // Initializing currentTabStatus
 var currentTabStatus = getCurrentTabStatus();
 
@@ -67,12 +75,15 @@ window.forceTabUpdate = sendTabUpdateMessage(true);
 
 // sendTabUpdateMessage will send a tabUpdate message if the tabStatus has changed
 // By setting force to true, the tabUpdate will be sent even if the tabStatus is unchanged
-function sendTabUpdateMessage(force?: boolean) {
+function sendTabUpdateMessage(force?: boolean, refreshObserverOnChange?: boolean) {
   let statusChanged = false;
-  
+
   // Call the function to send event to the background script
   var tabUpdateMessage = getCurrentTabStatus();
   statusChanged = statusHasChanged(tabUpdateMessage);
+  if (statusChanged && refreshObserverOnChange) {
+    updateObserveringElements();
+  }
   if (force || statusChanged) {
     currentTabStatus = tabUpdateMessage;
     try {
@@ -85,7 +96,7 @@ function sendTabUpdateMessage(force?: boolean) {
 }
 
 // getCurrentTabStatus uses the connector functions to get the current tabStatus
-function getCurrentTabStatus() : Messages.TabUpdate{
+function getCurrentTabStatus(): Messages.TabUpdate {
   return new Messages.TabUpdate(
     Messages.Endpoints.Context,
     Messages.Endpoints.Background,
@@ -101,7 +112,7 @@ function getCurrentTabStatus() : Messages.TabUpdate{
 // If the status of the tab has changed, we send the updated status, otherwise we send a ping
 // This handles changes in the next suggested bid changed by user directly inside a platform
 function sendPingMessage() {
-  const statusChanged = sendTabUpdateMessage(false);
+  const statusChanged = sendTabUpdateMessage(false, true);
   if (!statusChanged) {
     var pingMessage = new Messages.Ping(
       Messages.Endpoints.Context,
@@ -136,8 +147,11 @@ window.forceTabUpdate = () => sendTabUpdateMessage(true);
 // to make sure all elements that need some time to appear on the page are ready
 window.setTimeout(() => sendTabUpdateMessage(), 200);
 
-// Starting observers
-startObservingElements();
+// Starting observers, waiting for 500ms so that all components are loaded
+window.setTimeout(() => {
+  lastBidChangedElementToWatch= connector.getBidActivityElementToWatch();
+  startObservingElements();  
+}, 500);
 
 // Function to be executed before content script is unloaded
 function onContentUnload() {
