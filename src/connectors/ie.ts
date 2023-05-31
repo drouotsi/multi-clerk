@@ -124,7 +124,7 @@ class IEConnector implements Connector {
     }
 
     sendFairWarning(): void {
-        console.log("sending fair warnings is not possible in interencheres")
+        // NOT POSSIBLE
     }
 
     getBidActivityElementToWatch(): HTMLElement {

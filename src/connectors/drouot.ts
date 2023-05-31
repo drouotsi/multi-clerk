@@ -2,50 +2,40 @@ import { Toolbox } from '../content/toolbox';
 import { Connector } from '../interfaces/interface';
 import { BidOrigin } from "../shared/types";
 
+// Value in the bidType div
+const FLOOR_LABEL = 'ROOM';
+const LIVE_LABEL = 'LIVE';
+const STATUT_ENCHERE = 'enchere';
+const STATUT_MAP = 'map';
+
+// Usefull for detecting if a bid in the bidList is an actual bid
 const FRENCH_FLOOR_LABEL = 'Salle'
 const ENGLISH_FLOOR_LABEL = 'Auction room ';
 const FRENCH_LIVE_LABEL = 'Internet -'
 const ENGLISH_LIVE_LABEL = 'Internet'
 
+const SEND_MESSAGE_BUTTON_ENGLISH = 'Send a message';
+const SEND_MESSAGE_BUTTON_FRENCH = 'Envoyer un message';
+
+const FAIR_WARNING_LABEL_FRENCH = 'Enchérissez rapidement';
+const FAIR_WARNING_LABEL_ENGLISH = 'Bid quickly';
+
+const FAIR_WARNING_SEND_FRENCH = 'Envoyer';
+const FAIR_WARNING_SEND_ENGLISH = 'Send';
 
 class DrouotConnector implements Connector {
 
-
-    private amountInput: HTMLInputElement | null = null;
-    private bidList: HTMLElement | null = null;
-    constructor() {
-
-        setTimeout(() => {
-            // finding the amount input HTMLInputElement
-            const elements = Toolbox.findAllElementsByClassNameContainingString("style__Input");
-            if (!elements) {
-                throw new Error('No element found with css class name containing style__Input');
-            }
-            for (let i = 0; i < elements.length; i++) {
-                const element = elements[i] as HTMLInputElement;
-                if (element && element?.parentElement?.parentElement) {
-                    const classNames = element.parentElement.parentElement.classList;
-                    for (let j = 0; j < classNames.length; j++) {
-                        if (classNames[j].includes("ContainerBoutonLeft")) {
-                            this.amountInput = element;
-                        }
-                    }
-                }
-            }
-            if (!this.amountInput) {
-                throw new Error('No input found with css class name containing style__Input and having parent of parent with class ContainerBoutonLeft');
-            }
-        }, 500);
-    }
+    constructor() { }
 
     getCurentStartingPrice(): number | undefined {
-        if (this.bidList) {
-            let lastDiv = Toolbox.getLastDirectChildWithTagName(this.bidList, 'DIV');
-            if (lastDiv) {
-                const startingPriceAmount = Toolbox.findLastElementByClassNameContainingString("StartingPriceItem__Amount", lastDiv)?.getElementsByTagName('span')[0].getElementsByTagName('span')[0];
-                if (startingPriceAmount) {
-                    return parseInt(Toolbox.extractDigitsFromString(startingPriceAmount.innerHTML).replace(/\s/g, ''));
+        let statut = this.getStatut();
+        let currentAmount = this.getCurrentAmount();
+        if (statut) {
+            if (statut.value === STATUT_MAP && currentAmount) {
+                if (!currentAmount.value) {
+                    return 0;
                 }
+                return parseInt(Toolbox.extractDigitsFromString(currentAmount.value).replace(/\s/g, ''));
             }
         }
         return undefined;
@@ -60,23 +50,22 @@ class DrouotConnector implements Connector {
     }
 
     placeBid(value: number): void {
-        if (!isNaN(value) && this.amountInput) {
-            const backspaces = Toolbox.getBackspaceKeysNeededToEmptyInput(this.amountInput);
+
+        let amountInput = this.getAmountInput();
+        if (!isNaN(value) && amountInput) {
+            const backspaces = Toolbox.getBackspaceKeysNeededToEmptyInput(amountInput);
             const numericArray = value.toString().split('').concat(['Enter']);
             Toolbox.pressKeys(backspaces.concat(numericArray));
-        } else {
-            console.error("amountInput not found");
         }
         this.clearFairWarningMessage();
     }
 
     setStartingPrice(value: number): void {
-        if (!isNaN(value) && this.amountInput) {
-            const backspaces = Toolbox.getBackspaceKeysNeededToEmptyInput(this.amountInput);
+        let amountInput = this.getAmountInput();
+        if (!isNaN(value) && amountInput) {
+            const backspaces = Toolbox.getBackspaceKeysNeededToEmptyInput(amountInput);
             const numericArray = value.toString().split('').concat(['.']);
             Toolbox.pressKeys(backspaces.concat(numericArray));
-        } else {
-            console.error("amountInput not found");
         }
     }
 
@@ -86,6 +75,9 @@ class DrouotConnector implements Connector {
 
     elementIsBid(element: HTMLElement) {
         return Toolbox.findFirstElementByClassNameContainingString("BidItem__Text", element) != null
+    }
+    elementIsLotChange(element: HTMLElement) {
+        return Toolbox.findFirstElementByClassNameContainingString("LotItem", element) != null
     }
 
     elementBidMatches(element: HTMLElement, origin: BidOrigin, amount: number): boolean {
@@ -113,8 +105,9 @@ class DrouotConnector implements Connector {
     }
 
     adjudicateLot(origin: BidOrigin, amount: number): void {
-        if (this.bidList) {
-            let climbingBid = Toolbox.getLastDirectChildWithTagName(this.bidList, 'DIV');
+        let bidList = <HTMLElement>Toolbox.findFirstElementByClassNameContainingString("style__ColBidAuction")?.getElementsByTagName('div')[0].getElementsByTagName('div')[2].getElementsByTagName('div')[0];
+        if (bidList) {
+            let climbingBid = Toolbox.getLastDirectChildWithTagName(bidList, 'DIV');
             // We will iterate through the bid list elements, starting from the bottom, 
             // until we find the correct bid or hit an element that is not a bid (Lot / starting price)
             while (climbingBid) {
@@ -130,8 +123,13 @@ class DrouotConnector implements Connector {
                         climbingBid = Toolbox.getPreviousSibling(climbingBid) as HTMLDivElement;
                     }
                 } else {
-                    console.error("bid not found for adjudication");
-                    break;
+                    if (this.elementIsLotChange(climbingBid)) {
+                        console.error("bid not found for adjudication");
+                        break;
+                    } else {
+                        climbingBid = Toolbox.getPreviousSibling(climbingBid) as HTMLDivElement;
+                    }
+
                 }
             }
         }
@@ -154,36 +152,26 @@ class DrouotConnector implements Connector {
     }
 
     getBidActivityElementToWatch(): HTMLElement {
-        this.bidList = <HTMLElement>Toolbox.findFirstElementByClassNameContainingString("style__ColBidAuction")?.getElementsByTagName('div')[0].getElementsByTagName('div')[2].getElementsByTagName('div')[0];
-        if (this.bidList) {
-            return this.bidList;
+        let extensionDiv = Toolbox.getElementBySelector("#extensionInputs");
+        if (extensionDiv) {
+            return extensionDiv;
         }
-        throw new Error('the bid list to watch was not found');
+        throw new Error('the extensionDiv was not found');
     }
 
     getLastBidOrigin(): BidOrigin | undefined {
-        if (this.bidList) {
-            let lastDiv = Toolbox.getLastDirectChildWithTagName(this.bidList, 'DIV');
-            if (lastDiv) {
-                let originSpan = Toolbox.findLastElementByClassNameContainingString("BidItem__Text", lastDiv)?.getElementsByTagName('span')[0];
-                if (!originSpan) {
-                    return undefined;
+        let statut = this.getStatut();
+        let bidType = this.getBidType();
+        if (statut && statut.value !== "map" && bidType) {
+            switch (bidType.value) {
+                case FLOOR_LABEL: {
+                    return BidOrigin.Local;
                 }
-                if (originSpan.innerHTML) {
-                    switch (originSpan.innerHTML) {
-                        case FRENCH_FLOOR_LABEL:
-                        case ENGLISH_FLOOR_LABEL: {
-
-                            return BidOrigin.Local;
-                        }
-                        case FRENCH_LIVE_LABEL:
-                        case ENGLISH_LIVE_LABEL: {
-                            return BidOrigin.Live;
-                        }
-                        default: {
-                            return undefined;
-                        }
-                    }
+                case LIVE_LABEL: {
+                    return BidOrigin.Live;
+                }
+                default: {
+                    return undefined;
                 }
             }
         }
@@ -191,17 +179,13 @@ class DrouotConnector implements Connector {
     }
 
     getLastBidAmount(): number | undefined {
-        if (this.bidList) {
-            let lastDiv = Toolbox.getLastDirectChildWithTagName(this.bidList, 'DIV');
-            if (lastDiv) {
-                let amountDiv = Toolbox.findLastElementByClassNameContainingString("BidItem__Amount", lastDiv)
-                if (amountDiv) {
-                    let amountSpan = Toolbox.getLastDirectChildWithTagName(Toolbox.getLastDirectChildWithTagName(amountDiv, 'SPAN'), 'SPAN');
-                    if (amountSpan?.innerHTML.length && amountSpan?.innerHTML.length >= 0) {
-                        return parseInt(Toolbox.extractDigitsFromString(amountSpan.innerHTML));
-                    }
-                }
-            }
+        let statut = this.getStatut();
+        let currentAmount = this.getCurrentAmount();
+        if ((statut.value === STATUT_ENCHERE || statut.value === STATUT_MAP) && currentAmount && !currentAmount.value) {
+            return 0;
+        }
+        if ((statut?.value === STATUT_ENCHERE || statut?.value === STATUT_MAP) && currentAmount && currentAmount.value) {
+            return parseInt(Toolbox.extractDigitsFromString(currentAmount.value));
         }
         return undefined;
     }
@@ -216,15 +200,29 @@ class DrouotConnector implements Connector {
     }
 
     clickOnSendMessage() {
-        let sendMessageSpan = Toolbox.findFirstElementIncludingInnerHTML("span", "Envoyer un message");
-        if (sendMessageSpan) {
-            sendMessageSpan.parentElement?.click();
-            setTimeout(() => this.selectFairWarningMessage(), 100);
+        let sendMessageSpanFrench = Toolbox.findFirstElementIncludingInnerHTML("span", SEND_MESSAGE_BUTTON_FRENCH);
+        if (sendMessageSpanFrench) {
+            sendMessageSpanFrench.parentElement?.click();
+            setTimeout(() => this.selectFairWarningMessage("FR"), 100);
+        } else {
+            let sendMessageSpanEnglish = Toolbox.findFirstElementIncludingInnerHTML("span", SEND_MESSAGE_BUTTON_ENGLISH);
+            if (sendMessageSpanEnglish) {
+                sendMessageSpanEnglish.parentElement?.click();
+                setTimeout(() => this.selectFairWarningMessage("EN"), 100);
+            }
         }
     }
 
-    selectFairWarningMessage() {
-        let fairWarningOptionElmt = Toolbox.findFirstElementIncludingInnerHTML("option", "Enchérissez rapidement");
+    selectFairWarningMessage(lang : string) {
+        let fairWarningOptionElmt : HTMLElement | null;
+        if (lang === "FR") {
+            fairWarningOptionElmt = Toolbox.findFirstElementIncludingInnerHTML("option", FAIR_WARNING_LABEL_FRENCH);
+        } else if (lang === "EN") {
+            fairWarningOptionElmt = Toolbox.findFirstElementIncludingInnerHTML("option", FAIR_WARNING_LABEL_ENGLISH);
+        } else {
+            return;
+        }
+        
         if (fairWarningOptionElmt) {
             const fairWarningOption = fairWarningOptionElmt as HTMLOptionElement;
             const selectElement = fairWarningOption.parentElement as HTMLSelectElement;
@@ -236,7 +234,15 @@ class DrouotConnector implements Connector {
                     //fairWarningOption.click();
                     const event = new Event('change', { bubbles: true });
                     selectElement.dispatchEvent(event);
-                    let sendMessageElmt = Toolbox.findFirstElementIncludingInnerHTML("button", "Envoyer", formDiv);
+                    let sendMessageElmt : HTMLElement | null;
+                    if (lang === "FR") {
+                        sendMessageElmt = Toolbox.findFirstElementIncludingInnerHTML("button", FAIR_WARNING_SEND_FRENCH, formDiv);
+                    } else if (lang === "EN") {
+                        sendMessageElmt = Toolbox.findFirstElementIncludingInnerHTML("button", FAIR_WARNING_SEND_ENGLISH, formDiv);
+                    } else {
+                        return;
+                    }
+                    
                     if (sendMessageElmt) {
                         sendMessageElmt.click();
                     }
@@ -248,24 +254,28 @@ class DrouotConnector implements Connector {
     clearFairWarningMessage() {
         const deleteImg = Toolbox.findImageByAlt("Delete");
         if (deleteImg && deleteImg.parentElement?.parentElement) {
-            let messageDiv = Toolbox.findFirstElementIncludingInnerHTML("div", "Enchérissez rapidement", deleteImg.parentElement.parentElement);
-            if (messageDiv) {
+            let messageDivFrench = Toolbox.findFirstElementIncludingInnerHTML("div", FAIR_WARNING_LABEL_FRENCH, deleteImg.parentElement.parentElement);
+            if (messageDivFrench) {
                 deleteImg.parentElement?.click();
+            } else {
+                let messageDivEnglish = Toolbox.findFirstElementIncludingInnerHTML("div", FAIR_WARNING_LABEL_ENGLISH, deleteImg.parentElement.parentElement);
+                if (messageDivEnglish) {
+                    deleteImg.parentElement?.click();
+                } 
             }
         }
     }
 
-    setIncrementToFixValue(value : number): void {
-        console.log("trying to set fixed increment in drouot connector")
-        const incrementPossibleValues = [10,20,25,50,100,200,500,1000,2000,3000,5000,10000,50000];
-        var closest = incrementPossibleValues.reduce(function(prev, curr) {
+    setIncrementToFixValue(value: number): void {
+        const incrementPossibleValues = [10, 20, 25, 50, 100, 200, 500, 1000, 2000, 3000, 5000, 10000, 50000];
+        var closest = incrementPossibleValues.reduce(function (prev, curr) {
             return (Math.abs(curr - value) < Math.abs(prev - value) ? curr : prev);
-          });
-          
-          const option = Toolbox.findOptionByValue(closest.toString());
-          if (option) {
+        });
+
+        const option = Toolbox.findOptionByValue(closest.toString());
+        if (option) {
             const selectElement = option.parentElement as HTMLSelectElement;
-            option.selected = true; 
+            option.selected = true;
             const event = new Event('change', { bubbles: true });
             selectElement.dispatchEvent(event);
         }
@@ -275,26 +285,60 @@ class DrouotConnector implements Connector {
         let StandardStepElmt = Toolbox.findFirstElementIncludingInnerHTML("span", "Standard", document)?.parentElement?.parentElement;
         if (StandardStepElmt) {
             Toolbox.findFirstElementByClassNameContainingString("IncrementButton", StandardStepElmt)?.click();
-        } else {
-            console.log("StandardStepElmt not found")
         }
     }
 
-    getLastLiveBidderId(): string | undefined{
+    getLastLiveBidderId(): string | undefined {
         if (this.getLastBidOrigin() !== BidOrigin.Live) {
             return undefined;
         }
-        if (this.bidList) {
-            let lastDiv = Toolbox.getLastDirectChildWithTagName(this.bidList, 'DIV');
-            if (lastDiv) {
-                let userIdSpan = Toolbox.findLastElementByClassNameContainingString("BidItem__Text", lastDiv)?.getElementsByTagName('span')[1];
-                if (userIdSpan) {
-                    return userIdSpan.innerHTML;
-                }
-            }  
+        let lastBidderId = this.getLastBidderId();
+        if (lastBidderId) {
+            return lastBidderId.value;
         }
         return undefined;
     }
+
+    getCurrentAmount(): HTMLInputElement {
+        return this.getInputById('currentAmount');
+    }
+    getLastBidderId(): HTMLInputElement {
+        return this.getInputById('lastBidderId');
+    }
+    getBidType(): HTMLInputElement {
+        return this.getInputById('bidType');
+    }
+    getStatut(): HTMLInputElement {
+        return this.getInputById('statut');
+    }
+    getAmountInput(): HTMLInputElement {
+        // finding the amount input HTMLInputElement
+        const elements = Toolbox.findAllElementsByClassNameContainingString("style__Input");
+        if (!elements) {
+            throw new Error('No element found with css class name containing style__Input');
+        }
+        for (let i = 0; i < elements.length; i++) {
+            const element = elements[i] as HTMLInputElement;
+            if (element && element?.parentElement?.parentElement) {
+                const classNames = element.parentElement.parentElement.classList;
+                for (let j = 0; j < classNames.length; j++) {
+                    if (classNames[j].includes("ContainerBoutonLeft")) {
+                        return element;
+                    }
+                }
+            }
+        }
+        throw new Error('Amount input was found');
+    }
+
+    getInputById(inputId: string): HTMLInputElement {
+        let input = Toolbox.getElementBySelector('#' + inputId) as HTMLInputElement;
+        if (!input) {
+            throw new Error('No input with id ' + inputId + ' was found');
+        }
+        return input;
+    }
+
 }
 
 var connector = new DrouotConnector();
