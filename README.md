@@ -27,7 +27,7 @@ follow these steps:
 3.  Run `npm install` to install the dependencies.
 4.  Run `source builder.sh`
 5.a  Run `build_dev` to generate an unpacked, unminified extension with maps for debugging
-5.b  Run `build_prod_unsigned` to generate an unpacked, minified extension that only allows one tab of the same URL prefixes
+5.b  Run `build_prod` to generate an unpacked, minified extension that only allows one tab of the same URL prefixes
 6.  Open the Chrome browser and go to the Extensions page (`chrome://extensions`).
 7.  Enable Developer mode by toggling the switch on the top-right corner.
 8.  Click on "Load unpacked" and select the `dist` folder from the project directory.
