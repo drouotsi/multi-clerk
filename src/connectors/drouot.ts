@@ -162,7 +162,7 @@ class DrouotConnector implements Connector {
     getLastBidOrigin(): BidOrigin | undefined {
         let statut = this.getStatut();
         let bidType = this.getBidType();
-        if (statut && statut.value !== "map" && bidType) {
+        if (statut && statut.value == STATUT_ENCHERE && bidType) {
             switch (bidType.value) {
                 case FLOOR_LABEL: {
                     return BidOrigin.Local;
@@ -312,23 +312,7 @@ class DrouotConnector implements Connector {
         return this.getInputById('statut');
     }
     getAmountInput(): HTMLInputElement {
-        // finding the amount input HTMLInputElement
-        const elements = Toolbox.findAllElementsByClassNameContainingString("style__Input");
-        if (!elements) {
-            throw new Error('No element found with css class name containing style__Input');
-        }
-        for (let i = 0; i < elements.length; i++) {
-            const element = elements[i] as HTMLInputElement;
-            if (element && element?.parentElement?.parentElement) {
-                const classNames = element.parentElement.parentElement.classList;
-                for (let j = 0; j < classNames.length; j++) {
-                    if (classNames[j].includes("ContainerBoutonLeft")) {
-                        return element;
-                    }
-                }
-            }
-        }
-        throw new Error('Amount input was found');
+        return this.getInputById('bidInput');
     }
 
     getInputById(inputId: string): HTMLInputElement {
