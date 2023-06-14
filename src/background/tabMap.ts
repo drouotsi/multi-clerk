@@ -277,7 +277,7 @@ export function sendActionToTabs(msg: any, excludingTabId?: number) {
     case Messages.MessageTypes.Adjudicate: {
       let adjudicateMessage = Messages.Adjudicate.CastMessage(msg);
       for (const [urlPrefix, tabDataMap] of adjudicateMessage.tabsScreenshotMap.entries()) {
-        for (const [tabId, tabDataMap] of tabMap.get(urlPrefix)?.entries() ?? []) {
+        for (const [tabId, tabDataMap] of adjudicateMessage.tabsScreenshotMap.get(urlPrefix)?.entries() ?? []) {
           if ((typeof excludingTabId !== undefined &&
             excludingTabId === tabId) ||
             !tabDataMap.isActive) {
