@@ -150,17 +150,9 @@ class IEConnector implements Connector {
     }
 
     getLastBidAmount(): number | undefined {
-        const origin = this.getLastBidOrigin();
-        if (origin) {
-            switch (origin) {
-                case BidOrigin.Local:
-                case BidOrigin.Live:
-                    const bidElement = Toolbox.getElementBySelector("#enchere");
-                    if (bidElement) {
-                        return parseInt(getSubstringBeforeLastSpace(bidElement.innerHTML).replace(/\s/g, ''));
-                    }
-                    break;
-            }
+        const bidElement = Toolbox.getElementBySelector("#enchere");
+        if (bidElement) {
+            return parseInt(getSubstringBeforeLastSpace(bidElement.innerHTML).replace(/\s/g, ''));
         }
         return undefined;
     }
