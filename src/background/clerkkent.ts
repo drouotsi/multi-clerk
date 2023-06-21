@@ -137,7 +137,11 @@ chrome.runtime.onMessage.addListener(function (msg: any, sender, sendResponse) {
                   BidOrigin.Local);
                 isExtensionOn().then(isOn => {
                   if (isOn) {
-                    sendActionToTabs(placeBidMessage, tabId);
+                    // Here we add a setTimeout to 10ms so that the local bid is added after a potential setStartingPrice command
+                    // that are sent using setTimeout 0
+                    setTimeout(() => {
+                      sendActionToTabs(placeBidMessage, tabId);
+                    }, 10);
                   }
                 })
               }
