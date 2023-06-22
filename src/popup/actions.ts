@@ -133,6 +133,7 @@ export function sendSetStartingPrice(): void {
             Messages.Endpoints.Background,
             value);
         chrome.runtime.sendMessage(setStartingPrice);
+        emptyBidValue();
     }
 }
 
