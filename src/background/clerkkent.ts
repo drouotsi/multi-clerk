@@ -15,6 +15,7 @@ import {
   tabMap,
   updateTabIsActive,
   getCurrentTabStatus,
+  checkForOtherExistingLiveBidAtAtLeast,
 } from './tabMap'
 import { handleMessageDeliveryError } from './errorHandling';
 
@@ -107,51 +108,42 @@ chrome.runtime.onMessage.addListener(function (msg: any, sender, sendResponse) {
       const tabUpdateMessage = Messages.TabUpdate.CastMessage(msg);
       // if the tab sending the update is active, the background might need to send actions
       // to other tabs
-      isTabActive(tabId).then(isActive => {
-        if (sender.tab) {
-
-          // here we need to check if we are in a concurrent live bidding situation.
-          // To do so, we need to see if the current tabBiddingData is not a Floor bid
-          // of the same value as the live bid recieved.
-
-          const currentTabStatus = getCurrentTabStatus(tabId);
-          if (currentTabStatus) {
-            if (!(tabUpdateMessage.bidOrigin == BidOrigin.Live
-              && currentTabStatus.lastAmount == tabUpdateMessage.bidValue
-              && currentTabStatus.lastBidOrigin == BidOrigin.Local)) {
-
+          if (sender.tab) {
+            const currentTabStatus = getCurrentTabStatus(tabId);
+            if (currentTabStatus && currentTabStatus.isActive) {
               updateTabBiddingData(tabId, sender.tab, getTabBiddingData(
-                isActive,
+                currentTabStatus.isActive,
                 tabUpdateMessage.bidValue,
                 tabUpdateMessage.bidOrigin,
                 tabUpdateMessage.LiveBidderId,
                 tabUpdateMessage.nextBidAmountSuggestion,
                 tabUpdateMessage.startingPrice,
                 tabUpdateMessage.currentLot));
-              // If the recieved update message is a live bid, we place a floor bid in other tabs
-              if (tabUpdateMessage.bidOrigin == BidOrigin.Live && tabUpdateMessage.bidValue && isActive) {
-                const placeBidMessage = new Messages.PlaceBid(
-                  Messages.Endpoints.Background,
-                  Messages.Endpoints.Context,
-                  tabUpdateMessage.bidValue,
-                  BidOrigin.Local);
-                isExtensionOn().then(isOn => {
-                  if (isOn) {
-                    // Here we add a setTimeout to 10ms so that the local bid is added after a potential setStartingPrice command
-                    // that are sent using setTimeout 0
-                    setTimeout(() => {
+              // If the updated tab has a live bid and no other provider has a live bid at this value or more, we push a local bid to them
+              if (               
+                tabUpdateMessage.bidValue != undefined &&
+                tabUpdateMessage.bidOrigin == BidOrigin.Live &&
+                sender.tab.id && 
+                !checkForOtherExistingLiveBidAtAtLeast(sender.tab.id, tabUpdateMessage.bidValue)) {
+                
+                // If the recieved update message is a live bid, we place a floor bid in other tabs
+                if (tabUpdateMessage.bidValue && currentTabStatus.isActive) {
+                  const placeBidMessage = new Messages.PlaceBid(
+                    Messages.Endpoints.Background,
+                    Messages.Endpoints.Context,
+                    tabUpdateMessage.bidValue,
+                    BidOrigin.Local);
+                  isExtensionOn().then(isOn => {
+                    if (isOn) {
                       sendActionToTabs(placeBidMessage, tabId);
-                    }, 10);
-                  }
-                })
+                    }
+                  })
+                }
               }
+              // we update the popup even if the tab is not active or the extension killswitch is off
+              sendCurrentTabsToPopup();
             }
-            // we update the popup even if the tab is not active or the extension killswitch is off
-            sendCurrentTabsToPopup();
           }
-        }
-      })
-
       break;
     }
     case Messages.MessageTypes.TabOnOff: {
