@@ -36,7 +36,7 @@ chrome.tabs.onRemoved.addListener((tabId) => {
 });
 
 // Listening for messages from content scripts and popups
-chrome.runtime.onMessage.addListener(function (msg: any, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(async function (msg: any, sender, sendResponse) {
   const message = Messages.ClerkMessage.CastMessage(msg);
   switch (message.getType()) {
 
@@ -108,42 +108,44 @@ chrome.runtime.onMessage.addListener(function (msg: any, sender, sendResponse) {
       const tabUpdateMessage = Messages.TabUpdate.CastMessage(msg);
       // if the tab sending the update is active, the background might need to send actions
       // to other tabs
-          if (sender.tab) {
-            const currentTabStatus = getCurrentTabStatus(tabId);
-            if (currentTabStatus && currentTabStatus.isActive) {
-              updateTabBiddingData(tabId, sender.tab, getTabBiddingData(
-                currentTabStatus.isActive,
-                tabUpdateMessage.bidValue,
-                tabUpdateMessage.bidOrigin,
-                tabUpdateMessage.LiveBidderId,
-                tabUpdateMessage.nextBidAmountSuggestion,
-                tabUpdateMessage.startingPrice,
-                tabUpdateMessage.currentLot));
-              // If the updated tab has a live bid and no other provider has a live bid at this value or more, we push a local bid to them
-              if (               
-                tabUpdateMessage.bidValue != undefined &&
-                tabUpdateMessage.bidOrigin == BidOrigin.Live &&
-                sender.tab.id && 
-                !checkForOtherExistingLiveBidAtAtLeast(sender.tab.id, tabUpdateMessage.bidValue)) {
-                
-                // If the recieved update message is a live bid, we place a floor bid in other tabs
-                if (tabUpdateMessage.bidValue && currentTabStatus.isActive) {
-                  const placeBidMessage = new Messages.PlaceBid(
-                    Messages.Endpoints.Background,
-                    Messages.Endpoints.Context,
-                    tabUpdateMessage.bidValue,
-                    BidOrigin.Local);
-                  isExtensionOn().then(isOn => {
-                    if (isOn) {
-                      sendActionToTabs(placeBidMessage, tabId);
-                    }
-                  })
+      if (sender.tab) {
+        const currentTabStatus = getCurrentTabStatus(tabId);
+        if (currentTabStatus) {
+          updateTabBiddingData(tabId, sender.tab, getTabBiddingData(
+            currentTabStatus.isActive,
+            tabUpdateMessage.bidValue,
+            tabUpdateMessage.bidOrigin,
+            tabUpdateMessage.LiveBidderId,
+            tabUpdateMessage.nextBidAmountSuggestion,
+            tabUpdateMessage.startingPrice,
+            tabUpdateMessage.currentLot));
+          if (currentTabStatus.isActive) {
+            // If the updated tab has a live bid and no other provider has a live bid at this value or more, we push a local bid to them
+            if (
+              tabUpdateMessage.bidValue != undefined &&
+              tabUpdateMessage.bidOrigin == BidOrigin.Live &&
+              sender.tab.id &&
+              !checkForOtherExistingLiveBidAtAtLeast(sender.tab.id, tabUpdateMessage.bidValue)) {
+
+              // If the recieved update message is a live bid, we place a floor bid in other tabs
+              if (tabUpdateMessage.bidValue && currentTabStatus.isActive) {
+                const placeBidMessage = new Messages.PlaceBid(
+                  Messages.Endpoints.Background,
+                  Messages.Endpoints.Context,
+                  tabUpdateMessage.bidValue,
+                  BidOrigin.Local);
+                const isOn = await isExtensionOn();
+                if (isOn) {
+                  sendActionToTabs(placeBidMessage, tabId);
                 }
               }
-              // we update the popup even if the tab is not active or the extension killswitch is off
-              sendCurrentTabsToPopup();
             }
+
           }
+        }
+        // we update the popup even if the tab is not active or the extension killswitch is off
+        sendCurrentTabsToPopup();
+      }
       break;
     }
     case Messages.MessageTypes.TabOnOff: {
