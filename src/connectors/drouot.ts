@@ -50,7 +50,6 @@ class DrouotConnector implements Connector {
     }
 
     placeBid(value: number): void {
-
         let amountInput = this.getAmountInput();
         if (!isNaN(value) && amountInput) {
             const backspaces = Toolbox.getBackspaceKeysNeededToEmptyInput(amountInput);
