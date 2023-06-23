@@ -107,7 +107,7 @@ export function handleOnRemoved(tabId: number) {
 }
 
 // getUrlPrefixFromTabId returns the UrlPrefix key of the map it's stored in
-export function getUrlPrefixFromTabId(tabId: number) : UrlPrefix {
+export function getUrlPrefixFromTabId(tabId: number): UrlPrefix {
   // Check if the tab URL matches any of the URL prefixes in the map
   for (const [urlPrefix, tabDataMap] of tabMap.entries()) {
     if (tabDataMap.get(tabId)) {
@@ -145,6 +145,22 @@ export function getCurrentTabStatus(tabId: number) {
     }
   }
   return undefined;
+}
+
+// checkForOtherExistingLiveBidAtAtLeast returns true if a tab has a live bid of at least the amount
+export function checkForOtherExistingLiveBidAtAtLeast(ignoringTabId : number, amount: number) {
+  // Check if the tab URL matches any of the URL prefixes in the map
+  for (const [urlPrefix, tabDataMap] of tabMap.entries()) {
+    for (const [tabId, tabDataMap] of tabMap.get(urlPrefix)?.entries() ?? []) {
+      if (tabDataMap.lastBidOrigin == BidOrigin.Live
+        && tabDataMap.lastAmount != undefined
+        && tabDataMap.lastAmount >= amount
+        && tabId != ignoringTabId) {
+        return true
+      }
+    }
+  }
+  return false;
 }
 
 // updateTabIsActive will update the active property of a tabStatus stored in the tabMap based on the given tabId
@@ -189,17 +205,12 @@ export function sendActionToTabs(msg: any, excludingTabId?: number) {
             !tabDataMap.isActive) {
             continue;
           }
-          // The timeout ensures that all tabs recieve the actions successively, as quickly as possible
-          // That prevents a potential autobid from injecting a floor bid in another tab before the
-          // setStartingPrice is sent to the other tab
-          setTimeout(() => {
             chrome.scripting.executeScript({
               target: { tabId },
               args: [setStartingPriceMessage.value],
               // @ts-ignore
               func: (...args) => window.connector.setStartingPrice(args[0]),
             });
-          }, 0);
         }
 
       }
@@ -225,17 +236,12 @@ export function sendActionToTabs(msg: any, excludingTabId?: number) {
             continue;
           }
 
-          // The timeout ensures that all tabs recieve the actions successively, as quickly as possible
-          // That prevents a potential autobid from injecting a floor bid in another tab before the
-          // placeBid is sent to the other tab
-          setTimeout(() => {
             chrome.scripting.executeScript({
               target: { tabId },
               args: [placeBidMessage.bidValue],
               // @ts-ignore
               func: (...args) => window.connector.placeBid(args[0]),
             });
-          }, 0);
         }
       }
       break;
