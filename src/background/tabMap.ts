@@ -22,15 +22,17 @@ export function resetTabMap() {
   }
 }
 
-// getTabBiddingData is used to initialize a tabBiddingData object
-export function getTabBiddingData(
+// createTabBiddingData is used to initialize a tabBiddingData object
+export function createTabBiddingData(
   isActive: boolean,
   lastAmount?: number | undefined,
   lastBidOrigin?: BidOrigin | undefined,
   LiveBidderId?: string | undefined,
   nextBidAmountSuggestion?: number | undefined,
   startingPrice?: number | undefined,
-  currentLot?: string | undefined) {
+  currentLot?: string | undefined,
+  expectedAmount?: number | undefined,
+  expectedStartingPrice?: number | undefined,) {
   const tabBiddingData: TabBiddingData = {
     lastUpdate: new Date(),
     lastAmount: lastAmount,
@@ -39,7 +41,9 @@ export function getTabBiddingData(
     nextBidAmountSuggestion: nextBidAmountSuggestion,
     startingPrice: startingPrice,
     currentLot: currentLot,
-    isActive: isActive
+    isActive: isActive,
+    expectedAmount: expectedAmount,
+    expectedStartingPrice: expectedStartingPrice,
   };
   return tabBiddingData;
 }
@@ -58,7 +62,7 @@ export function handleOnInstalled() {
           if (url.startsWith(urlPrefix)) {
             if (tab.id) {
               setActiveTab(tab.id, true);
-              addTabToMap(urlPrefix, tab.id, getTabBiddingData(true));
+              addTabToMap(urlPrefix, tab.id, createTabBiddingData(true));
             }
             break;
           }
@@ -85,7 +89,7 @@ export function handleOnUpdated(tabId: number, tab: chrome.tabs.Tab) {
         // If the tab is not in the map, add it with initial bidding 
         if (!(process.env.NODE_ENV === 'production' && tabDataMap.size > 0)) {
           setActiveTab(tabId, true);
-          tabDataMap.set(tabId, getTabBiddingData(true));
+          tabDataMap.set(tabId, createTabBiddingData(true));
         }
       }
     } else {
@@ -123,18 +127,31 @@ export function updateTabBiddingData(tabId: number, tab: chrome.tabs.Tab, data: 
   // Check if the tab URL matches any of the URL prefixes in the map
   for (const [urlPrefix, tabDataMap] of tabMap.entries()) {
     if (tab.url && tab.url.startsWith(urlPrefix)) {
-
       const tabBiddingData = tabDataMap.get(tabId);
       if (!tabBiddingData) {
         // If the tab is not in the map, add it with initial bidding data
         if (process.env.NODE_ENV === 'production' && tabDataMap.size > 0) {
           return;
         }
+        tabDataMap.set(tabId, data);
+      } else {
+        //tabDataMap.set(tabId, data);
+        if (!(tabBiddingData.expectedAmount != undefined &&
+          data.lastBidOrigin == BidOrigin.Local &&
+          data.lastAmount == tabBiddingData.expectedAmount)) {
+          data.expectedAmount = tabBiddingData.expectedAmount;
+        }
+        if (!(tabBiddingData.expectedStartingPrice != undefined &&
+          data.startingPrice != undefined &&
+          data.startingPrice == tabBiddingData.expectedStartingPrice)) {
+          data.expectedStartingPrice = tabBiddingData.expectedStartingPrice;
+        }
+        tabDataMap.set(tabId, data);
       }
-      tabDataMap.set(tabId, data);
     }
   }
 }
+
 // getCurrentTabStatus returns the tabStatus of a given tabId stored in the tabMap
 export function getCurrentTabStatus(tabId: number) {
   // Check if the tab URL matches any of the URL prefixes in the map
@@ -147,21 +164,34 @@ export function getCurrentTabStatus(tabId: number) {
   return undefined;
 }
 
-// checkForOtherExistingLiveBidAtAtLeast returns true if a tab has a live bid of at least the amount
-export function checkForOtherExistingLiveBidAtAtLeast(ignoringTabId : number, amount: number) {
-  // Check if the tab URL matches any of the URL prefixes in the map
-  for (const [urlPrefix, tabDataMap] of tabMap.entries()) {
-    for (const [tabId, tabDataMap] of tabMap.get(urlPrefix)?.entries() ?? []) {
-      if (tabDataMap.lastBidOrigin == BidOrigin.Live
-        && tabDataMap.lastAmount != undefined
-        && tabDataMap.lastAmount >= amount
-        && tabId != ignoringTabId) {
-        return true
+// oneOtherTabPreventingToPlaceALocalBid returns true if a tab has a live bid of at least the amount
+export function oneOtherTabPreventingToPlaceALocalBid(ignoringTabId: number, amount: number): boolean {
+    // Check if the tab URL matches any of the URL prefixes in the map
+    for (const [urlPrefix, tabDataMap] of tabMap.entries()) {
+      for (const [tabId, tabDataMap] of tabMap.get(urlPrefix)?.entries() ?? []) {
+        if ( // other tab is synchronized
+          (tabDataMap.lastBidOrigin == BidOrigin.Live
+            && tabDataMap.lastAmount != undefined
+            && tabDataMap.lastAmount >= amount
+            && tabId != ignoringTabId
+            && tabDataMap.expectedAmount == undefined
+            && tabDataMap.expectedStartingPrice == undefined) ||
+          (
+            // Other tab is not synchronized and waiting for a local bid higher then the one we're willing to place
+            tabDataMap.expectedAmount != undefined &&
+            tabDataMap.expectedAmount > amount
+          ) ||
+          ( // Other tab is not synchronized and waiting for a starting price higher than the one we're placing
+            tabDataMap.expectedStartingPrice != undefined &&
+            tabDataMap.expectedStartingPrice > amount
+          )) {
+            return true;
+        }
       }
     }
-  }
-  return false;
+    return false;
 }
+
 
 // updateTabIsActive will update the active property of a tabStatus stored in the tabMap based on the given tabId
 export function updateTabIsActive(tabId: number, isActive: boolean) {
@@ -175,8 +205,6 @@ export function updateTabIsActive(tabId: number, isActive: boolean) {
     }
   }
 }
-
-
 
 // addTabToMap will add a tabBiddingData to the tabMap
 function addTabToMap(urlPrefix: UrlPrefix, tabId: number, biddingData: TabBiddingData) {
@@ -205,6 +233,8 @@ export function sendActionToTabs(msg: any, excludingTabId?: number) {
             !tabDataMap.isActive) {
             continue;
           }
+            tabDataMap.expectedStartingPrice = setStartingPriceMessage.value;
+            tabDataMap.expectedAmount = undefined;
             chrome.scripting.executeScript({
               target: { tabId },
               args: [setStartingPriceMessage.value],
@@ -226,16 +256,8 @@ export function sendActionToTabs(msg: any, excludingTabId?: number) {
             continue;
           }
 
-          // If the message comes from the background (automatic bid generated after a live bid occured)
-          // We first check that the tab we are sending it to is not already in the correct state
-          // This will prevent issues during bid deletions 
-
-          if (placeBidMessage.from == Messages.Endpoints.Background &&
-            tabDataMap.lastBidOrigin == placeBidMessage.bidOrigin &&
-            tabDataMap.lastAmount == placeBidMessage.bidValue) {
-            continue;
-          }
-
+          tabDataMap.expectedStartingPrice = undefined;
+          tabDataMap.expectedAmount =  placeBidMessage.bidValue;
             chrome.scripting.executeScript({
               target: { tabId },
               args: [placeBidMessage.bidValue],
@@ -370,6 +392,22 @@ export function sendActionToTabs(msg: any, excludingTabId?: number) {
             target: { tabId },
             // @ts-ignore
             func: () => window.forceTabUpdate(true),
+          });
+        }
+      }
+      break;
+    }
+    case Messages.MessageTypes.Ping: {
+      for (const [urlPrefix, tabDataMap] of tabMap.entries()) {
+        for (const [tabId, tabDataMap] of tabMap.get(urlPrefix)?.entries() ?? []) {
+          if (typeof excludingTabId !== undefined &&
+            excludingTabId === tabId) {
+            continue;
+          }
+          chrome.scripting.executeScript({
+            target: { tabId },
+            // @ts-ignore
+            func: () => window.ping(),
           });
         }
       }

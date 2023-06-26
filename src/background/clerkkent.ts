@@ -10,12 +10,12 @@ import {
   handleOnUpdated,
   sendActionToTabs,
   updateTabBiddingData,
-  getTabBiddingData,
+  createTabBiddingData,
   sendCurrentTabsToPopup,
   tabMap,
   updateTabIsActive,
   getCurrentTabStatus,
-  checkForOtherExistingLiveBidAtAtLeast,
+  oneOtherTabPreventingToPlaceALocalBid,
 } from './tabMap'
 import { handleMessageDeliveryError } from './errorHandling';
 
@@ -88,10 +88,6 @@ chrome.runtime.onMessage.addListener(async function (msg: any, sender, sendRespo
       });
       break;
     }
-    case Messages.MessageTypes.Ping: {
-      // the content script sends a periodic ping to keep it and the background service alive
-      break;
-    }
     case Messages.MessageTypes.TabUpdate: {
       // the content script sends a tabUpdate when it's tab status changed.
       // Occures instead of a ping if there was any change in the tab status or if the
@@ -111,7 +107,7 @@ chrome.runtime.onMessage.addListener(async function (msg: any, sender, sendRespo
       if (sender.tab) {
         const currentTabStatus = getCurrentTabStatus(tabId);
         if (currentTabStatus) {
-          updateTabBiddingData(tabId, sender.tab, getTabBiddingData(
+          updateTabBiddingData(tabId, sender.tab, createTabBiddingData(
             currentTabStatus.isActive,
             tabUpdateMessage.bidValue,
             tabUpdateMessage.bidOrigin,
@@ -119,26 +115,27 @@ chrome.runtime.onMessage.addListener(async function (msg: any, sender, sendRespo
             tabUpdateMessage.nextBidAmountSuggestion,
             tabUpdateMessage.startingPrice,
             tabUpdateMessage.currentLot));
-          if (currentTabStatus.isActive) {
-            // If the updated tab has a live bid and no other provider has a live bid at this value or more, we push a local bid to them
-            if (
-              tabUpdateMessage.bidValue != undefined &&
-              tabUpdateMessage.bidOrigin == BidOrigin.Live &&
-              sender.tab.id &&
-              !checkForOtherExistingLiveBidAtAtLeast(sender.tab.id, tabUpdateMessage.bidValue)) {
 
-              // If the recieved update message is a live bid, we place a floor bid in other tabs
-              if (tabUpdateMessage.bidValue && currentTabStatus.isActive) {
-                const placeBidMessage = new Messages.PlaceBid(
-                  Messages.Endpoints.Background,
-                  Messages.Endpoints.Context,
-                  tabUpdateMessage.bidValue,
-                  BidOrigin.Local);
-                const isOn = await isExtensionOn();
+          // If the updated tab is active and has a live bid 
+          // we check if another provider has a live bid at this value or more
+          // or if it's expected to have a local bid or starting price bellow the bid amount
+          // if so, we push a local bid to them.
+          if (currentTabStatus.isActive &&
+            tabUpdateMessage.bidValue != undefined &&
+            tabUpdateMessage.bidOrigin == BidOrigin.Live &&
+            sender.tab.id &&
+            !oneOtherTabPreventingToPlaceALocalBid(sender.tab.id, tabUpdateMessage.bidValue)) {
+            if (tabUpdateMessage.bidValue && currentTabStatus.isActive) {
+              const placeBidMessage = new Messages.PlaceBid(
+                Messages.Endpoints.Background,
+                Messages.Endpoints.Context,
+                tabUpdateMessage.bidValue,
+                BidOrigin.Local);
+              isExtensionOn().then(isOn => {
                 if (isOn) {
                   sendActionToTabs(placeBidMessage, tabId);
                 }
-              }
+              });
             }
 
           }
@@ -186,14 +183,16 @@ chrome.runtime.onMessage.addListener(async function (msg: any, sender, sendRespo
     case Messages.MessageTypes.Adjudicate:
     case Messages.MessageTypes.SetFixedIncrement:
     case Messages.MessageTypes.SetAutoIncrement:
-    case Messages.MessageTypes.PlaceBid: {
-      isExtensionOn().then(isOn => {
-        if (isOn) {
-          sendActionToTabs(msg);
-        }
-      })
-      break;
-    }
+    case Messages.MessageTypes.PlaceBid:
+    case Messages.MessageTypes.Ping:
+      {
+        isExtensionOn().then(isOn => {
+          if (isOn) {
+            sendActionToTabs(msg);
+          }
+        })
+        break;
+      }
     default: {
       console.error('unexpected message type : ', message.getType());
     }
