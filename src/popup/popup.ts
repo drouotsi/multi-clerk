@@ -30,6 +30,7 @@ import {
   initializeTabTableView,
   currentTabMap
 } from "./tabs";
+import { toggleUnsoldLotDisplay, unsoldLotDisplayed } from './unsoldLot';
 
 
 // Actions elements
@@ -53,6 +54,10 @@ export let incrementInput: HTMLInputElement | null;
 let fixedIncrementButton: HTMLButtonElement | null;
 let autoIncrementButton: HTMLButtonElement | null;
 let cancelIncrementButton: HTMLButtonElement | null;
+
+// Unsold lot elements
+let unsoldLotConfirmButton: HTMLButtonElement | null;
+let unsoldLotCancelButton: HTMLButtonElement | null;
 
 let storedTabMap: Map<UrlPrefix, Map<number, TabBiddingData>> | null;
 
@@ -115,6 +120,9 @@ function setLanguage() {
   // global killswitch
   const globalKillSwitchLabel = document.getElementById('globalKillSwitchLabel') as HTMLSpanElement
   if (globalKillSwitchLabel) globalKillSwitchLabel.innerHTML = getI18nMsg('globalKillSwitchLabel');
+  // unsold lot
+  if (unsoldLotConfirmButton) unsoldLotConfirmButton.innerHTML = getI18nMsg('unsoldLotConfirmButton');
+  if (unsoldLotCancelButton) unsoldLotCancelButton.innerHTML = getI18nMsg('unsoldLotCancelButton');
 }
 
 // initializeKillSwitch will require the stored value of the killswitch from background and add an onClick listner to it
@@ -200,6 +208,10 @@ function getAllHTMLElementsFromPopup() {
   fixedIncrementButton = document.getElementById('fixedIncrementButton') as HTMLButtonElement | null;
   autoIncrementButton = document.getElementById('autoIncrementButton') as HTMLButtonElement | null;
   cancelIncrementButton = document.getElementById('cancelIncrementButton') as HTMLButtonElement | null;
+
+  // Unsold lot inputs
+  unsoldLotConfirmButton = document.getElementById('unsoldLotConfirmButton') as HTMLButtonElement | null;
+  unsoldLotCancelButton = document.getElementById('unsoldLotCancelButton') as HTMLButtonElement | null;
 }
 
 // addClickEventListners adds all click event listners from the actions, adjudication and increment containers.
@@ -233,7 +245,7 @@ function addClickEventListners() {
     toggleIncrementDisplay();
   });
   unsoldLotButton?.addEventListener('click', function () {
-    sendUnsoldLot();
+    toggleUnsoldLotDisplay();
   });
   nextBidAmountSuggestionButton?.addEventListener('click', function () {
     sendNextBidSuggestedAmount();
@@ -243,6 +255,13 @@ function addClickEventListners() {
   });
   sendFairWarningButton?.addEventListener('click', function () {
     sendFairWarning();
+  });
+  unsoldLotConfirmButton?.addEventListener('click', function () {
+    toggleUnsoldLotDisplay();
+    sendUnsoldLot();
+  });
+  unsoldLotCancelButton?.addEventListener('click', function () {
+    toggleUnsoldLotDisplay();
   });
 }
 
@@ -265,7 +284,7 @@ function addKeyboardListners() {
     // Shortcuts for actions are only accepted depending on what is dispayed in the popup
     if (extensionIsOn) {
       if (event.key === 'Enter') {
-        if (!adjudicatePopupDisplayed && !incrementPopupDisplayed) {
+        if (!adjudicatePopupDisplayed && !incrementPopupDisplayed && !unsoldLotDisplayed) {
           sendPlaceBidMessage();
         } else if (incrementPopupDisplayed) {
           sendFixedIncrement();
@@ -273,29 +292,34 @@ function addKeyboardListners() {
           handleAdjudicate();
         }
       } else if (event.key === 's' || event.key === 'S') {
-        if (!adjudicatePopupDisplayed && !incrementPopupDisplayed) sendSetStartingPrice();
+        if (!adjudicatePopupDisplayed && !incrementPopupDisplayed && !unsoldLotDisplayed) sendSetStartingPrice();
       } else if (event.key === '-') {
         if (adjudicatePopupDisplayed) {
           closeAdjudicationContainer();
         } else if (incrementPopupDisplayed) {
           toggleIncrementDisplay();
+        } else if (unsoldLotDisplayed){
+          toggleUnsoldLotDisplay();
         } else {
           sendRemoveLastBid();
         }
       } else if (event.key === '*') {
         if (!incrementPopupDisplayed) handleAdjudicate();
       } else if (event.key === '/') {
-        if (!adjudicatePopupDisplayed && !incrementPopupDisplayed) {
+        if (unsoldLotDisplayed) {
+          toggleUnsoldLotDisplay();
           sendUnsoldLot();
-        } else if (incrementPopupDisplayed) {
+        } else if (!unsoldLotDisplayed) {
+          toggleUnsoldLotDisplay();
+        } if (incrementPopupDisplayed) {
           sendAutoIncrement();
         }
       } else if (event.key === '+') {
-        if (!adjudicatePopupDisplayed && !incrementPopupDisplayed) sendNextBidSuggestedAmount();
+        if (!adjudicatePopupDisplayed && !incrementPopupDisplayed && !unsoldLotDisplayed) sendNextBidSuggestedAmount();
       } else if (event.key === 'm' || event.key === 'M') {
-        if (!adjudicatePopupDisplayed && !incrementPopupDisplayed) sendFairWarning();
+        if (!adjudicatePopupDisplayed && !incrementPopupDisplayed && !unsoldLotDisplayed) sendFairWarning();
       } else if (event.key === '.') {
-        if (!adjudicatePopupDisplayed && !incrementPopupDisplayed) {
+        if (!adjudicatePopupDisplayed && !incrementPopupDisplayed && !unsoldLotDisplayed) {
           toggleIncrementDisplay();
         } else if (incrementPopupDisplayed) {
           sendFixedIncrement();

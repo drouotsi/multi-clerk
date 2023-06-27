@@ -9,7 +9,7 @@ import { currentTabMap, getUrlPrefixDisplayName } from "./tabs";
 // to the concerned tabs. Any new live bids comming from platorms in the meantime will therefore be ignored.
 let tabsScreenshot: Map<UrlPrefix, Map<number, TabBiddingData>>;
 
-// adjudicatePopupDisplayed is state of the adjudication popup
+// adjudicatePopupDisplayed is the state of the adjudication popup
 // It is used for blocking and enabling keyboard shortcuts
 export let adjudicatePopupDisplayed = false;
 
