@@ -45,7 +45,7 @@ export let nextBidAmountSuggestionButton: HTMLButtonElement | null;
 export let storedNextBidAmountSuggestion: number | undefined;
 
 // Adjudication elements
-let validateAdjudicationButton: HTMLButtonElement | null;
+export let validateAdjudicationButton: HTMLButtonElement | null;
 let cancelAdjudicationButton: HTMLButtonElement | null;
 
 // Increment elements

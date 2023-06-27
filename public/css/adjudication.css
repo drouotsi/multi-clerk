@@ -5,11 +5,10 @@
   margin-top: 10px;
   border-radius: 20px;
   margin-bottom: 5px;
+  padding-bottom: 5px;
 }
 
 #adjudicationStatusContainer {
-  width: 550px;
-  max-height: 300px;
   overflow-y: scroll;
   overflow: hidden;
   align-self: center;
@@ -36,34 +35,55 @@
   height: 40px;
 }
 
+.adjudicationStatusLine.Live {
+  margin-bottom: 15px;
+}
+
 .adjudicationStatusSource {
+  margin-right: 25px;
   font-weight: bolder;
-  width: 110px;
-  min-width: 110px;
+  font-size: x-large;
 }
 
 .adjudicationStatusCurrentLot {
+  margin-right: 25px;
   font-weight: bolder;
-  width: 90px;
-  min-width: 90px;
+  font-size: x-large;
 }
 
 .adjudicationstatusOrigin {
-  width: 110px;
-  min-width: 110px;
+  margin-right: 25px;
   text-align: left;
-  font-size: larger;
-  margin-left: 50px;
+  font-weight: bolder;
+  font-size: x-large;
   white-space: nowrap;
+  border-radius: 15px;
+  max-width: 280px;
+  overflow: hidden;
+}
+
+.adjudicationstatusOrigin.Live {
+  padding: 8px;
 }
 
 .adjudicationstatusLastAmount{
-  width: 180px;
-  min-width: 180px;
-  text-align: right;
+  font-weight: bolder;
+  font-size: x-large;
+  text-align: left;
 }
 
 .adjudicationstatusLiveBidderId {
   text-align: left;
   font-size: large;
+}
+
+.adjudicationMessage {
+  color: white;
+  margin-bottom: 15px;
+}
+
+.nothingToAdjudicateMessage ,
+.incoherenceInAdjudicationMessage{
+  display: block;
+  text-align: center;
 }

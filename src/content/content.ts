@@ -142,6 +142,7 @@ startPingRoutine();
 
 // @ts-ignore
 window.forceTabUpdate = () => sendTabUpdateMessage(true);
+
 // @ts-ignore
 window.ping = () => {
   sendTabUpdateMessage(false);
