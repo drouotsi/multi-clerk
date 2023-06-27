@@ -55,17 +55,23 @@ export function updateTabsMapAndSuggestedBid(tabMap: Map<UrlPrefix, Map<number, 
   }
   statusContainerElement.innerHTML = '';
   for (const [urlPrefix, tabDataMap] of tabMap.entries()) {
-    for (const [tabId, TabBiddingData] of tabDataMap.entries() ?? []) {
+    for (const [tabId, tabBiddingData] of tabDataMap.entries() ?? []) {
       if (!sourceTabId) {
         sourceTabId = tabId;
         localStorage.setItem(LOCAL_STORAGE_CURRENT_SOURCE_TAB, String(tabId));
       }
-      if (sourceTabId && tabId == sourceTabId) updateNextBidAmountSuggestion(TabBiddingData.nextBidAmountSuggestion)
+      if (sourceTabId && tabId == sourceTabId) updateNextBidAmountSuggestion(tabBiddingData.nextBidAmountSuggestion)
       let statusElement = generateStatusElement(urlPrefix,
-        TabBiddingData,
+        tabBiddingData,
         sourceTabId == tabId,
         tabId);
       statusContainerElement.appendChild(statusElement);
+      if (tabBiddingData.currentLotDescription != undefined) {
+        const LotDesciptionDivElement = document.createElement('div');
+        LotDesciptionDivElement.classList.add('lotDescription');
+        LotDesciptionDivElement.innerHTML = `${tabBiddingData.currentLotDescription}`;
+        statusContainerElement.appendChild(LotDesciptionDivElement);
+      }
     }
   }
 }
@@ -96,7 +102,6 @@ function generateStatusElement(urlPrefix: string,
   tabBiddingData: TabBiddingData,
   issourceTab: boolean,
   tabId: number): HTMLDivElement {
-
   var getI18nMsg = chrome.i18n.getMessage;
   const provider = getUrlPrefixDisplayName(urlPrefix);
   const lastAmount = tabBiddingData.lastAmount !== undefined ? numberWithSeparator(tabBiddingData.lastAmount, ' ') : '';
@@ -172,9 +177,10 @@ function generateStatusElement(urlPrefix: string,
 
   const newStatusElement = document.createElement('div');
   newStatusElement.classList.add('statusLine');
-  newStatusElement.setAttribute("tabId", tabId.toString())
-
+  //if (tabBiddingData.lastBidOrigin == BidOrigin.Live) newStatusElement.classList.add(origin);
+  newStatusElement.setAttribute("tabId", tabId.toString());
   newStatusElement.innerHTML = template;
+
   if (tabBiddingData.isActive) {
     newStatusElement.classList.add('toggle-on');
     Toolbox.findFirstElementByClassNameContainingString("toggle-obj", newStatusElement)?.classList.add('toggle-on');

@@ -41,10 +41,18 @@ class DrouotConnector implements Connector {
         return undefined;
     }
 
-    getCurentLot(): string | undefined {
+    getCurrentLot(): string | undefined {
         const currLot = Toolbox.findFirstElementByClassNameContainingString("style__LotNum");
         if (currLot) {
             return currLot.innerHTML;
+        }
+        return undefined;
+    }
+
+    getCurrentLotDescription(): string | undefined {
+        const currentLotDesc = Toolbox.findFirstElementByClassNameContainingString("TextLotEnCours");
+        if (currentLotDesc) {
+            return currentLotDesc.innerHTML
         }
         return undefined;
     }
