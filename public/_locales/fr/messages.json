@@ -118,5 +118,13 @@
     "incoherenceInAdjudicationMessage": {
         "message": "Veuillez corriger les incohérences avant d'adjuger",
         "description": ""
+    },
+    "unsoldLotConfirmButton": {
+        "message": "Confirmer lot invendu (/)",
+        "description": ""
+    },
+    "unsoldLotCancelButton": {
+        "message": "Annuler (-)",
+        "description": ""
     }
 }
