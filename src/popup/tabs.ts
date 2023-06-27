@@ -126,7 +126,7 @@ function generateStatusElement(urlPrefix: string,
   <span class="statusSource">${provider}</span>
   <span class="statusCurrentLot">${currentLot}</span>
   <div class="statusOriginContainer">
-    <span class="statusOrigin ${tabBiddingData.lastBidOrigin}">${origin}<span class="statusLiveBidderId">${liveBidderId}</span></span>
+    <span class="statusOrigin ${tabBiddingData.lastBidOrigin}" style="background-color:${tabBiddingData.LiveBidderColor}">${origin}<span class="statusLiveBidderId">${liveBidderId}</span></span>
   </div>
   <span class="statusLastAmount">${startingPrice !== '' ? startingPrice : lastAmount}</span>
   </div>

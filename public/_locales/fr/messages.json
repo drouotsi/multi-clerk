@@ -8,15 +8,15 @@
         "description": ""
     },
     "bidButton": {
-        "message": "Enchérir (Enter)",
+        "message": "Salle (Enter)",
         "description": ""
     },
     "removeLastBidButton": {
-        "message": "Annuler l'enchère (-)",
+        "message": "Refuser l'enchère (-)",
         "description": ""
     },
     "nextBidAmountSuggestionButton": {
-        "message": "Enchérir $AMOUNT$ (+)",
+        "message": "Salle à $AMOUNT$ (+)",
         "description": "",
         "placeholders": {
             "AMOUNT": {
@@ -30,7 +30,7 @@
         "description": ""
     },
     "nextBidAmountSuggestionButtonEmpty": {
-        "message": "Enchérir -",
+        "message": "Salle à -",
         "description": ""
     },
     "setStartingPriceButton": {
@@ -46,7 +46,7 @@
         "description": ""
     },
     "adjudicateButton": {
-        "message": "Adjuger (*)",
+        "message": "Lot adjugé (*)",
         "description": ""
     },
     "sendFairWarningButton": {
@@ -108,13 +108,15 @@
         }
     },
     "TabStatusBidWithOriginLive": {
-        "message": "Live $AMOUNT$",
-        "description": "",
-        "placeholders": {
-            "AMOUNT": {
-                "content": "$1",
-                "example": ""
-            }
-        }
+        "message": "Live",
+        "description": ""
+    },
+    "nothingToAdjudicateMessage": {
+        "message": "Il n'y a rien à adjuger",
+        "description": ""
+    },
+    "incoherenceInAdjudicationMessage": {
+        "message": "Veuillez corriger les incohérences avant d'adjuger",
+        "description": ""
     }
 }

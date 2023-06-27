@@ -7,8 +7,32 @@ import { setActiveTab } from './sessionStorage';
 import { handleMessageDeliveryError } from './errorHandling';
 import { sendLog } from './log';
 
+const liveBidColors = [
+  "#922b21",
+  "#76448a",
+  "#1f618d",
+  "#117a65",
+  "#b9770e",
+  "#283747",
+  "#c0392b",
+  "#9b59b6",
+  "#2980b9",
+  "#16a085",
+  "#f39c12",
+  "#34495e",
+  "#d98880",
+  "#c39bd3",
+  "#7fb3d5",
+  "#73c6b6",
+  "#f8c471",
+  "#85929e",
+];
+
 // Create a tab map to store tabIds and bidding data for each URL prefix
 const tabMap: Map<UrlPrefix, Map<number, TabBiddingData>> = new Map();
+
+// Create a color map to store bidder colors
+const liveBiddersColorMap: Map<string, string> = new Map();
 
 // Export the tabMap variable
 export { tabMap };
@@ -33,11 +57,22 @@ export function createTabBiddingData(
   currentLot?: string | undefined,
   expectedAmount?: number | undefined,
   expectedStartingPrice?: number | undefined,) {
+    var liveBidderColor : string | undefined = undefined; 
+    if (lastBidOrigin == BidOrigin.Live &&
+      LiveBidderId != undefined) {
+        if (liveBiddersColorMap.has(LiveBidderId)) {
+          liveBidderColor = liveBiddersColorMap.get(LiveBidderId);
+        } else {
+          liveBidderColor = liveBidColors[(Math.floor(Math.random() * liveBidColors.length))];
+          liveBiddersColorMap.set(LiveBidderId, liveBidderColor);
+        }
+      }
   const tabBiddingData: TabBiddingData = {
     lastUpdate: new Date(),
     lastAmount: lastAmount,
     lastBidOrigin: lastBidOrigin,
     LiveBidderId: LiveBidderId,
+    LiveBidderColor: liveBidderColor,
     nextBidAmountSuggestion: nextBidAmountSuggestion,
     startingPrice: startingPrice,
     currentLot: currentLot,
