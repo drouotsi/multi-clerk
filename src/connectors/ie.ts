@@ -200,12 +200,24 @@ class IEConnector implements Connector {
         return undefined;
     }
 
-    getCurentLot(): string | undefined {
+    getCurrentLot(): string | undefined {
         const currentLot = Toolbox.getElementBySelector(".current");
         if (currentLot) {
             const lotNumberTd = Toolbox.findFirstElementByClassNameContainingString("numero", currentLot)
             if (lotNumberTd) {
                 return "Lot n° " + lotNumberTd.innerHTML;
+            }
+        }
+        return undefined;
+    }
+
+    getCurrentLotDescription(): string | undefined {
+        const currentLot = Toolbox.getElementBySelector(".current");
+        if (currentLot) {
+            const descriptionTd = Toolbox.findFirstElementByClassNameContainingString("description", currentLot)
+            console.log(descriptionTd?.innerHTML)
+            if (descriptionTd) {
+                return descriptionTd.innerHTML;
             }
         }
         return undefined;

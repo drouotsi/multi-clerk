@@ -114,7 +114,9 @@ chrome.runtime.onMessage.addListener(async function (msg: any, sender, sendRespo
             tabUpdateMessage.LiveBidderId,
             tabUpdateMessage.nextBidAmountSuggestion,
             tabUpdateMessage.startingPrice,
-            tabUpdateMessage.currentLot));
+            tabUpdateMessage.currentLot,
+            tabUpdateMessage.currentLotDescription,
+            ));
 
           // If the updated tab is active and has a live bid 
           // we check if another provider has a live bid at this value or more

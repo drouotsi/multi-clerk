@@ -65,7 +65,8 @@ function statusHasChanged(newStatus: Messages.TabUpdate): boolean {
     && newStatus.bidValue == currentTabStatus.bidValue
     && newStatus.nextBidAmountSuggestion == currentTabStatus.nextBidAmountSuggestion
     && newStatus.startingPrice == currentTabStatus.startingPrice
-    && newStatus.currentLot == currentTabStatus.currentLot)
+    && newStatus.currentLot == currentTabStatus.currentLot
+    && newStatus.currentLotDescription == currentTabStatus.currentLotDescription)
 }
 
 // This method is called on background startup to force the tab to send a status update
@@ -105,7 +106,8 @@ function getCurrentTabStatus(): Messages.TabUpdate {
     connector.getLastLiveBidderId(),
     connector.getNextBidAmountSuggestion(),
     connector.getCurentStartingPrice(),
-    connector.getCurentLot(),
+    connector.getCurrentLot(),
+    connector.getCurrentLotDescription()
   );
 }
 

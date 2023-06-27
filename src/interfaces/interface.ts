@@ -41,6 +41,8 @@ export interface Connector {
     getCurentStartingPrice(): number | undefined;
     // getNextBidAmountSuggestion returns the suggested next bid amount
     getNextBidAmountSuggestion(): number | undefined;
-    // getCurentLot returns the current lot
-    getCurentLot(): string | undefined;
+    // getCurrentLot returns the current lot
+    getCurrentLot(): string | undefined;
+    // getCurrentLotDescription returns the description of the current lot
+    getCurrentLotDescription(): string | undefined;
 }

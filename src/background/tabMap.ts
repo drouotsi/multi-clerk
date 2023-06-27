@@ -55,6 +55,7 @@ export function createTabBiddingData(
   nextBidAmountSuggestion?: number | undefined,
   startingPrice?: number | undefined,
   currentLot?: string | undefined,
+  currentLotDescription?: string | undefined,
   expectedAmount?: number | undefined,
   expectedStartingPrice?: number | undefined,) {
     var liveBidderColor : string | undefined = undefined; 
@@ -76,6 +77,7 @@ export function createTabBiddingData(
     nextBidAmountSuggestion: nextBidAmountSuggestion,
     startingPrice: startingPrice,
     currentLot: currentLot,
+    currentLotDescription: currentLotDescription,
     isActive: isActive,
     expectedAmount: expectedAmount,
     expectedStartingPrice: expectedStartingPrice,
