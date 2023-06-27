@@ -10,6 +10,7 @@ export type TabBiddingData = {
   nextBidAmountSuggestion: number | undefined;
   startingPrice: number | undefined;
   currentLot: string | undefined;
+  currentLotDescription: string | undefined;
   isActive: boolean;
   // We store the expected future value of the tab when we place a bid or set a starting price
   // This is used for checking if a floor bid needs to be placed in other tabs when a live bid is recieved

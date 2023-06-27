@@ -62,6 +62,7 @@ export module Messages {
         nextBidAmountSuggestion: number | undefined;
         startingPrice: number | undefined;
         currentLot: string | undefined;
+        currentLotDescription: string | undefined;
 
         constructor(from: Endpoints,
             to: Endpoints,
@@ -70,7 +71,8 @@ export module Messages {
             LiveBidderId: string | undefined,
             nextBidAmountSuggestion: number | undefined,
             startingPrice: number | undefined,
-            currentLot: string | undefined) {
+            currentLot: string | undefined,
+            currentLotDescription: string | undefined) {
             super(MessageTypes.TabUpdate, from, to);
             this.bidValue = bidValue;
             this.bidOrigin = bidOrigin;
@@ -78,6 +80,7 @@ export module Messages {
             this.nextBidAmountSuggestion = nextBidAmountSuggestion;
             this.startingPrice = startingPrice;
             this.currentLot = currentLot;
+            this.currentLotDescription = currentLotDescription;
         }
 
         public static CastMessage(msg: any) {
@@ -88,7 +91,8 @@ export module Messages {
                 msg.LiveBidderId, 
                 msg.nextBidAmountSuggestion, 
                 msg.startingPrice, 
-                msg.currentLot);
+                msg.currentLot,
+                msg.currentLotDescription);
         }
     }
 
