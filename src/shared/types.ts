@@ -6,6 +6,7 @@ export type TabBiddingData = {
   lastAmount: number | undefined;
   lastBidOrigin: BidOrigin | undefined;
   LiveBidderId: string | undefined;
+  LiveBidderColor: string | undefined;
   nextBidAmountSuggestion: number | undefined;
   startingPrice: number | undefined;
   currentLot: string | undefined;

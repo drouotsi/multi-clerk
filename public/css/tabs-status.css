@@ -50,7 +50,6 @@
 }
 
 .statusOrigin.LIVE {
-  background-color: #af5f5f;
   border-radius: 15px;
 }
 
@@ -109,7 +108,7 @@
 }
 
 .statusNextBidAmountSuggestionNotSource:hover {
-  background-color: #af5f5f;
+  background-color: #9b43a9;
 }
 
 .gotoIcon {
@@ -120,5 +119,5 @@
   height: 28px;
 }
 .gotoIcon:hover {
-  background-color: #af5f5f;
+  background-color: #9b43a9;
 }

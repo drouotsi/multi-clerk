@@ -8,15 +8,15 @@
         "description": ""
     },
     "bidButton": {
-        "message": "Bid (Enter)",
+        "message": "Floor (Enter)",
         "description": ""
     },
     "removeLastBidButton": {
-        "message": "Cancel bid (-)",
+        "message": "Refuse bid (-)",
         "description": ""
     },
     "nextBidAmountSuggestionButton": {
-        "message": "Bid $AMOUNT$ (+)",
+        "message": "Floor at $AMOUNT$ (+)",
         "description": "",
         "placeholders": {
             "AMOUNT": {
@@ -30,7 +30,7 @@
         "description": ""
     },
     "nextBidAmountSuggestionButtonEmpty": {
-        "message": "Bid -",
+        "message": "Floor at -",
         "description": ""
     },
     "setStartingPriceButton": {
@@ -46,7 +46,7 @@
         "description": ""
     },
     "adjudicateButton": {
-        "message": "Adjudicate (*)",
+        "message": "Adjudicate lot (*)",
         "description": ""
     },
     "sendFairWarningButton": {
@@ -54,7 +54,7 @@
         "description": ""
     },
     "validateAdjudicationButton": {
-        "message": "Adjudicate (*/Enter)",
+        "message": "Adjudicate lot (*/Enter)",
         "description": ""
     },
     "cancelAdjudicationButton": {
@@ -97,6 +97,14 @@
     },
     "TabStatusBidWithOriginLive": {
         "message": "Live",
+        "description": ""
+    },
+    "nothingToAdjudicateMessage": {
+        "message": "There is nothing to adjudicate",
+        "description": ""
+    },
+    "incoherenceInAdjudicationMessage": {
+        "message": "Please correct incoherences before trying to adjudicate",
         "description": ""
     }
 }
