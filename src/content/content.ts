@@ -142,6 +142,10 @@ startPingRoutine();
 
 // @ts-ignore
 window.forceTabUpdate = () => sendTabUpdateMessage(true);
+// @ts-ignore
+window.ping = () => {
+  sendTabUpdateMessage(false);
+};
 
 // We wait for 200ms before sending the initial tab status to the backoffice
 // to make sure all elements that need some time to appear on the page are ready
