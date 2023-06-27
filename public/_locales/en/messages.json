@@ -106,5 +106,13 @@
     "incoherenceInAdjudicationMessage": {
         "message": "Please correct incoherences before trying to adjudicate",
         "description": ""
+    },
+    "unsoldLotConfirmButton": {
+        "message": "Confirm lot is unsold (/)",
+        "description": ""
+    },
+    "unsoldLotCancelButton": {
+        "message": "Cancel (-)",
+        "description": ""
     }
 }
