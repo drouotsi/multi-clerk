@@ -102,49 +102,54 @@ chrome.runtime.onMessage.addListener(async function (msg: any, sender, sendRespo
         break;
       }
       const tabUpdateMessage = Messages.TabUpdate.CastMessage(msg);
-      // if the tab sending the update is active, the background might need to send actions
-      // to other tabs
-      if (sender.tab) {
-        const currentTabStatus = getCurrentTabStatus(tabId);
-        if (currentTabStatus) {
-          updateTabBiddingData(tabId, sender.tab, createTabBiddingData(
-            currentTabStatus.isActive,
-            tabUpdateMessage.bidValue,
-            tabUpdateMessage.bidOrigin,
-            tabUpdateMessage.LiveBidderId,
-            tabUpdateMessage.nextBidAmountSuggestion,
-            tabUpdateMessage.startingPrice,
-            tabUpdateMessage.currentLot,
-            tabUpdateMessage.currentLotDescription,
+      // We add a timeout so that starting prices have time to execute before a local bid 
+      // needs to be placed because of an autobid
+      setTimeout(() => {
+        // if the tab sending the update is active, the background might need to send actions
+        // to other tabs
+        if (sender.tab) {
+          const currentTabStatus = getCurrentTabStatus(tabId);
+          if (currentTabStatus) {
+            updateTabBiddingData(tabId, sender.tab, createTabBiddingData(
+              currentTabStatus.isActive,
+              tabUpdateMessage.bidValue,
+              tabUpdateMessage.bidOrigin,
+              tabUpdateMessage.LiveBidderId,
+              tabUpdateMessage.nextBidAmountSuggestion,
+              tabUpdateMessage.startingPrice,
+              tabUpdateMessage.currentLot,
+              tabUpdateMessage.currentLotDescription,
             ));
 
-          // If the updated tab is active and has a live bid 
-          // we check if another provider has a live bid at this value or more
-          // or if it's expected to have a local bid or starting price bellow the bid amount
-          // if so, we push a local bid to them.
-          if (currentTabStatus.isActive &&
-            tabUpdateMessage.bidValue != undefined &&
-            tabUpdateMessage.bidOrigin == BidOrigin.Live &&
-            sender.tab.id &&
-            !oneOtherTabPreventingToPlaceALocalBid(sender.tab.id, tabUpdateMessage.bidValue)) {
-            if (tabUpdateMessage.bidValue && currentTabStatus.isActive) {
-              const placeBidMessage = new Messages.PlaceBid(
-                Messages.Endpoints.Background,
-                Messages.Endpoints.Context,
-                tabUpdateMessage.bidValue,
-                BidOrigin.Local);
-              isExtensionOn().then(isOn => {
-                if (isOn) {
-                  sendActionToTabs(placeBidMessage, tabId);
-                }
-              });
-            }
+            // If the updated tab is active and has a live bid 
+            // we check if another provider has a live bid at this value or more
+            // or if it's expected to have a local bid or starting price bellow the bid amount
+            // if so, we push a local bid to them.
+            if (currentTabStatus.isActive &&
+              tabUpdateMessage.bidValue != undefined &&
+              tabUpdateMessage.bidOrigin == BidOrigin.Live &&
+              sender.tab.id &&
+              !oneOtherTabPreventingToPlaceALocalBid(sender.tab.id, tabUpdateMessage.bidValue)) {
+              if (tabUpdateMessage.bidValue && currentTabStatus.isActive) {
+                const placeBidMessage = new Messages.PlaceBid(
+                  Messages.Endpoints.Background,
+                  Messages.Endpoints.Context,
+                  tabUpdateMessage.bidValue,
+                  BidOrigin.Local);
+                isExtensionOn().then(isOn => {
+                  if (isOn) {
+                    sendActionToTabs(placeBidMessage, tabId);
+                  }
+                });
+              }
 
+            }
           }
+          // we update the popup even if the tab is not active or the extension killswitch is off
+          sendCurrentTabsToPopup();
         }
-        // we update the popup even if the tab is not active or the extension killswitch is off
-        sendCurrentTabsToPopup();
-      }
+      }, 50)
+
       break;
     }
     case Messages.MessageTypes.TabOnOff: {
