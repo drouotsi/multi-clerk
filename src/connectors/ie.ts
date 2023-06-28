@@ -41,13 +41,7 @@ class IEConnector implements Connector {
         let previousTypeElementValue = '';
         let previousLastBidAmount: number | undefined = -1;
         let maxRemovableBids = MAX_REMOVABLE_BIDS_FOR_SETTING_STARTING_PRICE;
-
-        // We cancel the set starting price if the adjudication popup is displayed (for safety)
-        const buttonOnlyVisibleInAdjudicationPopup = Toolbox.getElementBySelector(".button.rouge.suivant")
-        if (buttonOnlyVisibleInAdjudicationPopup) {
-            return
-        }
-        
+       
         const intervalId = setInterval(async () => {
             const typeElmnt = Toolbox.getElementBySelector('#type');
             let currentTypeElementValue = '';
