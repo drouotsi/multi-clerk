@@ -30,9 +30,9 @@ class IEConnector implements Connector {
                     // We add a timeout to let the socket return the starting price
                     setTimeout(() => {
                         if (this.amountInput) {
+                            Toolbox.setNumberInInput(value, this.amountInput);
                             Toolbox.clickOnButton(bidButton);
                             Toolbox.resetInput(this.amountInput);
-                            Toolbox.setNumberInInput(value, this.amountInput);
                         }
                     }, 50);
                 }
