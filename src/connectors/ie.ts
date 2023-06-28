@@ -27,9 +27,14 @@ class IEConnector implements Connector {
                 // If we are at Starting Price 0, we first set the starting price to the bid value
                 // and then place the local bid
                 if (this.getLastBidOrigin() === undefined && this.getStartingPriceAmount() == 0) {
-                    Toolbox.clickOnButton(bidButton);
-                    Toolbox.resetInput(this.amountInput);
-                    Toolbox.setNumberInInput(value, this.amountInput);
+                    // We add a timeout to let the socket return the starting price
+                    setTimeout(() => {
+                        if (this.amountInput) {
+                            Toolbox.clickOnButton(bidButton);
+                            Toolbox.resetInput(this.amountInput);
+                            Toolbox.setNumberInInput(value, this.amountInput);
+                        }
+                    }, 50);
                 }
                 Toolbox.clickOnButton(bidButton);
                 Toolbox.resetInput(this.amountInput);
@@ -41,7 +46,7 @@ class IEConnector implements Connector {
         let previousTypeElementValue = '';
         let previousLastBidAmount: number | undefined = -1;
         let maxRemovableBids = MAX_REMOVABLE_BIDS_FOR_SETTING_STARTING_PRICE;
-       
+
         const intervalId = setInterval(async () => {
             const typeElmnt = Toolbox.getElementBySelector('#type');
             let currentTypeElementValue = '';
