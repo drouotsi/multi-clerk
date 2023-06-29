@@ -12,10 +12,12 @@ let tabsScreenshot: Map<UrlPrefix, Map<number, TabBiddingData>>;
 // adjudicatePopupDisplayed is the state of the adjudication popup
 // It is used for blocking and enabling keyboard shortcuts
 export let adjudicatePopupDisplayed = false;
+export let adjudicateDisabled = false;
 
 // setAdjudicateContainer will display all lines of the tabsScreenshot inside the adjudication popup
 export function setAdjudicateContainer() {
   if (validateAdjudicationButton) validateAdjudicationButton.disabled = false;
+  adjudicateDisabled = false;
   tabsScreenshot = new Map(currentTabMap);
   let statusContainerElement = document.getElementById("adjudicationStatusContainer")
   if (!statusContainerElement) {
@@ -32,7 +34,7 @@ export function setAdjudicateContainer() {
 
   for (const [urlPrefix, tabDataMap] of tabsScreenshot.entries()) {
     for (const [tabId, TabBiddingData] of tabDataMap.entries() ?? []) {
-      if (TabBiddingData.lastBidOrigin && TabBiddingData.isActive) {
+      if (TabBiddingData.isActive) {
         if (TabBiddingData.lastBidOrigin == BidOrigin.Live) {
           if (!liveBidderWinnerFound) {
             liveWinningAmout = TabBiddingData.lastAmount;
@@ -43,7 +45,7 @@ export function setAdjudicateContainer() {
             incoherenceFound = true;
             break;
           }
-        } else {
+        } else if (TabBiddingData.lastBidOrigin == BidOrigin.Local){
           if (TabBiddingData.lastAmount != undefined && TabBiddingData.lastAmount > (floorWinningAmout ? floorWinningAmout : 0)) {
             floorWinningAmout = TabBiddingData.lastAmount;
             if (!liveBidderWinnerFound) {
@@ -51,6 +53,9 @@ export function setAdjudicateContainer() {
               winnerUrlPrefix = urlPrefix;
             }
           }
+        } else if (TabBiddingData.lastBidOrigin == undefined){
+          incoherenceFound = true;
+          break;        
         }
       }
     }
@@ -66,13 +71,13 @@ export function setAdjudicateContainer() {
   if (!liveBidderWinnerFound && floorWinningAmout === undefined) {
     let messageElement = generateAdjudicationMessage("nothingToAdjudicateMessage");
     statusContainerElement.appendChild(messageElement);
-    // TODO : Disable adjudicate button
+    adjudicateDisabled = true
     if (validateAdjudicationButton) validateAdjudicationButton.disabled = true;
     
   } else if (incoherenceFound) {
     let messageElement = generateAdjudicationMessage("incoherenceInAdjudicationMessage");
     statusContainerElement.appendChild(messageElement);
-    // TODO : Disable adjudicate button
+    adjudicateDisabled = true
     if (validateAdjudicationButton) validateAdjudicationButton.disabled = true;
   } else if (winner) {
     let statusElement = generateAdjudicationStatusElement(winnerUrlPrefix, winner);
@@ -145,4 +150,5 @@ export function closeAdjudicationContainer(): void {
   showContainer("adjudicationPopupContainer", false);
   showContainer("actionsContainer", true);
   adjudicatePopupDisplayed = false;
+  adjudicateDisabled = false;
 }
