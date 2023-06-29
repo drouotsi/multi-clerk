@@ -24,6 +24,18 @@ class IEConnector implements Connector {
             Toolbox.setNumberInInput(value, this.amountInput);
             const bidButton = Toolbox.getElementBySelector("#encherir-montant-choix")
             if (bidButton) {
+                // If we are at Starting Price 0, we first set the starting price to the bid value
+                // and then place the local bid
+                if (this.getLastBidOrigin() === undefined && this.getStartingPriceAmount() == 0) {
+                    // We add a timeout to let the socket return the starting price
+                    setTimeout(() => {
+                        if (this.amountInput) {
+                            Toolbox.setNumberInInput(value, this.amountInput);
+                            Toolbox.clickOnButton(bidButton);
+                            Toolbox.resetInput(this.amountInput);
+                        }
+                    }, 50);
+                }
                 Toolbox.clickOnButton(bidButton);
                 Toolbox.resetInput(this.amountInput);
             }
@@ -45,7 +57,15 @@ class IEConnector implements Connector {
                     if (currentTypeElementValue === 'Prix départ' && currentLastBidAmount === 0) {
                         clearInterval(intervalId); // Stop the interval when the condition is met
                         setTimeout(() => {
-                            this.placeBid(value);
+                            if (this.amountInput) {
+                                const bidButton = Toolbox.getElementBySelector("#encherir-montant-choix")
+                                if (bidButton) {
+                                    Toolbox.resetInput(this.amountInput);
+                                    Toolbox.setNumberInInput(value, this.amountInput);
+                                    Toolbox.clickOnButton(bidButton);
+                                    Toolbox.resetInput(this.amountInput);
+                                }
+                            }
                         }, 10);
                         return;
                     }
