@@ -16,6 +16,7 @@ import {
   toogleKillSwitch
 } from './actions';
 import {
+  adjudicateDisabled,
   adjudicatePopupDisplayed,
   closeAdjudicationContainer,
   handleAdjudicate
@@ -303,13 +304,13 @@ function addKeyboardListners() {
         } else {
           sendRemoveLastBid();
         }
-      } else if (event.key === '*') {
-        if (!incrementPopupDisplayed) handleAdjudicate();
+      } else if (event.key === '*') {        
+        if ((adjudicatePopupDisplayed && !adjudicateDisabled) || !adjudicateDisabled) handleAdjudicate();
       } else if (event.key === '/') {
         if (unsoldLotDisplayed) {
           toggleUnsoldLotDisplay();
           sendUnsoldLot();
-        } else if (!unsoldLotDisplayed) {
+        } else if (!unsoldLotDisplayed && !adjudicateDisabled && !incrementPopupDisplayed) {
           toggleUnsoldLotDisplay();
         } if (incrementPopupDisplayed) {
           sendAutoIncrement();
