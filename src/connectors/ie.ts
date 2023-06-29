@@ -57,7 +57,15 @@ class IEConnector implements Connector {
                     if (currentTypeElementValue === 'Prix départ' && currentLastBidAmount === 0) {
                         clearInterval(intervalId); // Stop the interval when the condition is met
                         setTimeout(() => {
-                            this.placeBid(value);
+                            if (this.amountInput) {
+                                const bidButton = Toolbox.getElementBySelector("#encherir-montant-choix")
+                                if (bidButton) {
+                                    Toolbox.resetInput(this.amountInput);
+                                    Toolbox.setNumberInInput(value, this.amountInput);
+                                    Toolbox.clickOnButton(bidButton);
+                                    Toolbox.resetInput(this.amountInput);
+                                }
+                            }
                         }, 10);
                         return;
                     }
@@ -215,7 +223,7 @@ class IEConnector implements Connector {
         if (currentLot) {
             const descriptionTd = Toolbox.findFirstElementByClassNameContainingString("description", currentLot)
             if (descriptionTd) {
-                return descriptionTd.innerHTML;
+                return descriptionTd.innerText;
             }
         }
         return undefined;
