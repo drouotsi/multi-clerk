@@ -214,7 +214,6 @@ class IEConnector implements Connector {
         const currentLot = Toolbox.getElementBySelector(".current");
         if (currentLot) {
             const descriptionTd = Toolbox.findFirstElementByClassNameContainingString("description", currentLot)
-            console.log(descriptionTd?.innerHTML)
             if (descriptionTd) {
                 return descriptionTd.innerHTML;
             }
