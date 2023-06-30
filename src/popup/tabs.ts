@@ -33,20 +33,28 @@ export function updateTabsMapAndSuggestedBid(tabMap: Map<UrlPrefix, Map<number, 
 
   // Retrieving the current source tabId from local storage and making sure that the tab still exists
   const sourceTabIdString = localStorage.getItem(LOCAL_STORAGE_CURRENT_SOURCE_TAB);
-  let sourceTabId: number | undefined;
+  let sourceTabId: number | undefined = undefined;
+  // Comparing current lots to warn user if lots mismatch
+  let lotsMismatch = false;
+  let currentTrimmedLowercasedLot: string | undefined;
   if (sourceTabIdString) {
     let tmpSourceTabId = parseInt(sourceTabIdString);
     if (tmpSourceTabId) {
       let tabFound = false;
       for (const [, tabDataMap] of tabMap.entries()) {
-        for (const [tabId,] of tabDataMap.entries() ?? []) {
+        for (const [tabId, tabBiddingData] of tabDataMap.entries() ?? []) {
+          if (currentTrimmedLowercasedLot === undefined && tabBiddingData.currentLot) {
+            currentTrimmedLowercasedLot = normalizeLotName(tabBiddingData.currentLot);
+          } else if (tabBiddingData.currentLot) {
+            if (currentTrimmedLowercasedLot != normalizeLotName(tabBiddingData.currentLot)) {
+              lotsMismatch = true;
+            }
+          }
           if (tabId === tmpSourceTabId) {
             tabFound = true;
             sourceTabId = tmpSourceTabId;
-            break;
           }
         }
-        if (tabFound) break;
       }
       if (!tabFound) {
         localStorage.removeItem(LOCAL_STORAGE_CURRENT_SOURCE_TAB);
@@ -64,7 +72,8 @@ export function updateTabsMapAndSuggestedBid(tabMap: Map<UrlPrefix, Map<number, 
       let statusElement = generateStatusElement(urlPrefix,
         tabBiddingData,
         sourceTabId == tabId,
-        tabId);
+        tabId,
+        lotsMismatch);
       statusContainerElement.appendChild(statusElement);
       if (tabBiddingData.currentLotDescription != undefined) {
         const LotDesciptionDivElement = document.createElement('div');
@@ -74,6 +83,17 @@ export function updateTabsMapAndSuggestedBid(tabMap: Map<UrlPrefix, Map<number, 
       }
     }
   }
+}
+
+function normalizeLotName(lotName: string) {
+  // Remove accents from letters using Unicode normalization and replace them with their non-accented counterparts
+  var withoutAccents = lotName.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+  // Remove all spaces from the string
+  var withoutSpaces = withoutAccents.replace(/\s/g, '');
+
+  // Convert the string to lowercase
+  return withoutSpaces.toLowerCase();
 }
 
 function updateNextBidAmountSuggestion(nextBidAmountSuggestion: number | undefined) {
@@ -101,7 +121,8 @@ export function deserializeAndStoreTabMap(serializedTabMap: string): Map<UrlPref
 function generateStatusElement(urlPrefix: string,
   tabBiddingData: TabBiddingData,
   issourceTab: boolean,
-  tabId: number): HTMLDivElement {
+  tabId: number,
+  lotsMismatch: boolean): HTMLDivElement {
   var getI18nMsg = chrome.i18n.getMessage;
   const provider = getUrlPrefixDisplayName(urlPrefix);
   const lastAmount = tabBiddingData.lastAmount !== undefined ? numberWithSeparator(tabBiddingData.lastAmount, ' ') : '';
@@ -125,11 +146,14 @@ function generateStatusElement(urlPrefix: string,
   if (tabBiddingData.nextBidAmountSuggestion !== undefined) {
     nextBidAmountSuggestion = getI18nMsg('TabStatusSuggestedNextBid', [numberWithSeparator(tabBiddingData.nextBidAmountSuggestion, ' ')]);
   }
-
+  let lotsMismatchClass = "";
+  if (lotsMismatch) {
+    lotsMismatchClass = "mismatch";
+  }
   let template = `
   <div class="statusLineLabelContainer">
   <span class="statusSource">${provider}</span>
-  <span class="statusCurrentLot">${currentLot}</span>
+  <span class="statusCurrentLot ${lotsMismatchClass}">${currentLot}</span>
   <div class="statusOriginContainer">
     <span class="statusOrigin ${tabBiddingData.lastBidOrigin}" style="background-color:${tabBiddingData.LiveBidderColor}">${origin}<span class="statusLiveBidderId">${liveBidderId}</span></span>
   </div>
