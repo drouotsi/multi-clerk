@@ -37,6 +37,9 @@
   width: 90px;
   min-width: 90px;
 }
+.statusCurrentLot.mismatch {
+  color: #ffb600;
+}
 
 .statusOriginContainer {
   width: 110px;
