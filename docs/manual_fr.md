@@ -60,12 +60,12 @@ Une fois que les interfaces de cyber clerc sont ouvertes, vous pouvez cliquer su
 ## Partie 2 : Points importants
 
 
-### Enchères lives
+### Enchères live
 
 
 Si une enchère live est placée par un internaute sur une plateforme, l'extension place automatiquement une enchère en salle sur les autres plateformes.
 
-Si plusieurs enchères lives arrivent en même temps, l'extension va considérer la première enchère qu'elle a reçue comme la gagnante et va écraser les autres enchères lives des autres plateformes avec une enchère en salle.
+Si plusieurs enchères live arrivent en même temps, l'extension va considérer la première enchère qu'elle a reçue comme la gagnante et va écraser les autres enchères live des autres plateformes avec une enchère en salle.
 
 
 ### Désactivation de l'extension
@@ -88,7 +88,7 @@ Il est aussi possible de désactiver une unique plateforme en cliquant ici :
 
 <img src="./images_fr/tab_off.png" alt="drawing" width="600"/>
 
-Si une plateforme est désactivée, les enchères lives de cette plateforme n'entraîneront plus la création d'enchères en salle sur les autres plateformes. De plus, aucune action de l'extension ne sera appliquée à cette plateforme (placer une enchère, supprimer la dernière enchère, effectuer une mise à prix, changer le pas d'enchère)
+Si une plateforme est désactivée, les enchères live de cette plateforme n'entraîneront plus la création d'enchères en salle sur les autres plateformes. De plus, aucune action de l'extension ne sera appliquée à cette plateforme (placer une enchère, supprimer la dernière enchère, effectuer une mise à prix, changer le pas d'enchère)
 
 Cette fonctionnalité peut permettre par exemple de réaligner les lots d'une plateforme en désactivant les autres et en effectuant plusieurs fois l'action 'lot invendu'.
 
