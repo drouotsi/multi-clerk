@@ -174,6 +174,11 @@ This directory contains language files as specified by the chrome i18n documenta
 
 This directory contains all css files of the extension's popup
 
+### `docs`
+
+This directory contains user guides that are published using github's Pages services. 
+The french manual is accessible at : https://drouotsi.github.io/multi-clerk/manual_fr
+
 
 Important Project Files
 ---------
