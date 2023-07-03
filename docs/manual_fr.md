@@ -24,7 +24,7 @@ Cette partie vous guidera à travers les étapes pour installer et commencer à 
 ### Étape 2 : Fonctionnalités de base
 
 
-1. Ouvrir les différentes interfaces de cyber-clerc dans le navigateur Chrome. Pour essayer l'extension, vous pouvez ouvrir une vente de test [sur Drouot](https://cyberdrouot.zonesecure.org/live-test) et [sur Interenchères](https://pro.interencheres.com).
+1. Ouvrir les différentes interfaces de cyber-clerc dans le navigateur Chrome. Pour essayer l'extension, vous pouvez ouvrir des ventes de test [sur Drouot](https://cyberdrouot.zonesecure.org/live-test), [sur Moniteur](https://cybermoniteur.zonesecure.org/live-test) ou [sur Interenchères](https://pro.interencheres.com).
 
 Une fois que les interfaces de cyber clerc sont ouvertes, vous pouvez cliquer sur le logo de l'extension et commencer à utiliser les fonctionnalités de base.
 
