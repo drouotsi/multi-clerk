@@ -65,13 +65,13 @@ Une fois que les interfaces de cyber clerc sont ouvertes, vous pouvez cliquer su
 
 Si une enchère live est placée par un internaute sur une plateforme, l'extension place automatiquement une enchère en salle sur les autres plateformes.
 
-Si plusieurs enchères lives arrivent en même temps, l'extension va considérer la première enchère qu'elle a reçu comme la gagnante et va écraser les autres enchères lives des autres plateformes avec une enchère en salle.
+Si plusieurs enchères lives arrivent en même temps, l'extension va considérer la première enchère qu'elle a reçue comme la gagnante et va écraser les autres enchères lives des autres plateformes avec une enchère en salle.
 
 
 ### Désactivation de l'extension
 
 
-Il est possible de désactiver l'extension complètement appuyant sur k, ou en cliquant ici :
+Il est possible de désactiver l'extension complètement en appuyant sur k, ou en cliquant ici :
 
 <img src="./images_fr/extension_off.png" alt="drawing" width="600"/>
 
@@ -88,7 +88,7 @@ Il est aussi possible de désactiver une unique plateforme en cliquant ici :
 
 <img src="./images_fr/tab_off.png" alt="drawing" width="600"/>
 
-Si une plateforme est désactivée, les enchères lives de cette plateforme n'entraîneront plus la création d'enchères en salle sur les autres plateformes. De plus, aucune action de l'extension ne sera appliquée à cette plateforme (placer une enchère, supprimer la dernière enchère, effectuer une mise à prix, changer le pas d'enchère etc)
+Si une plateforme est désactivée, les enchères lives de cette plateforme n'entraîneront plus la création d'enchères en salle sur les autres plateformes. De plus, aucune action de l'extension ne sera appliquée à cette plateforme (placer une enchère, supprimer la dernière enchère, effectuer une mise à prix, changer le pas d'enchère)
 
 Cette fonctionnalité peut permettre par exemple de réaligner les lots d'une plateforme en désactivant les autres et en effectuant plusieurs fois l'action 'lot invendu'.
 
@@ -104,7 +104,7 @@ Tant que le cyber-clerc ne confirme pas l'adjudication, d'autres enchères peuve
 
 <img src="./images_fr/too_late_bids.png" alt="drawing" width="600"/>
 
- Si le commissaire-priseur ne souhaite pas prendre en compte les enchères tardives, le cyber-clerc n'a qu'à confirmer l'adjudication (*). Si le commissaire-priseur souhaite reprendre la vente et prendre en compte les nouvelles enchères, il suffit d'annuler l'adjudication.
+ Si le commissaire-priseur ne souhaite pas prendre en compte les enchères tardives, le cyber-clerc n'a qu'à confirmer l'adjudication (*). Si le commissaire-priseur souhaite reprendre la vente et prendre en compte les nouvelles enchères, il suffit d'annuler l'adjudication (-).
 
 Si l'extension trouve une incohérence dans l'état des enchères, l'adjudication est interdite.
 
@@ -120,7 +120,7 @@ Si le champ de saisie est vide, alors les deux boutons 'Incrément fixe' et 'Inc
 
 En pratique, pour placer un incrément fixe, il faut taper : (.) montant (.)
 
-Pour placer un incrément automatique, il faut taper : (.) (.)
+Pour placer un incrément automatique, il faut taper : (.) (.) ou (.) (/)
 
 
 ## Partie 3 : Fonctionnalités secondaires
@@ -128,16 +128,16 @@ Pour placer un incrément automatique, il faut taper : (.) (.)
 
 ### Passer rapidement d'une interface de cyber-clerc à une autre
 
-L'extension permet de rapidement de faire changer l'onglet actif de Google Chrome pour passer d'une plateforme à une autre :
+L'extension permet de changer rapidement l'onglet actif de Google Chrome pour passer d'une plateforme à une autre :
 
 <img src="./images_fr/goto_tab.png" alt="drawing" width="600"/>
 
 
-### Changer la référence de l'enchère en salle automatique
+### Changer la référence de l'enchère en salle proposée
 
 
 L'extension propose de placer une enchère en salle au montant proposé sur internet (+).
 Il est possible que les différentes plateformes proposent un montant différent aux internautes sur le même lot.
-L'extension permet donc de se baser sur une plateforme plutôt qu'une autre pour mettre à jour le montant de cette enchère salle :
+L'extension permet de se baser sur une plateforme plutôt qu'une autre pour mettre à jour le montant de cette enchère en salle :
 
 <img src="./images_fr/active_tab.png" alt="drawing" width="600"/>
