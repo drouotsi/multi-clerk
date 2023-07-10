@@ -56,8 +56,13 @@ Une fois que les interfaces de cyber clerc sont ouvertes, vous pouvez cliquer su
 
     k : Mettre l'extension en pause (l'extension ne déclenche plus d'actions sur les onglets)
 
-
 ## Partie 2 : Points importants
+
+### Problème de synchronisation
+
+Pour éviter les doublons et les erreurs, l'extension ne considère que le premier onglet de cyber-clerc ouvert par plateforme. 
+Assurez-vous qu'il n'y a pas de cyber-clerc de vente test ouvert avant de vouloir utiliser l'extension sur une vraie vente.
+Assurez-vous qu'il y a un seul cyber-clerc ouvert par plateforme.
 
 
 ### Enchères live
@@ -122,6 +127,12 @@ En pratique, pour placer un incrément fixe, il faut taper : (.) montant (.)
 
 Pour placer un incrément automatique, il faut taper : (.) (.) ou (.) (/)
 
+
+### Ouverture et fermeture de l'extension
+
+L'extension se ferme si vous cliquez ailleurs sur la page, c'est le comportement attendu.
+Vous pouvez la réouvrir en cliquant sur le logo de l'extension.
+Même si l'extension est fermée, les enchères live continuent à générer des enchères salle sur les autres plateformes.
 
 ## Partie 3 : Fonctionnalités secondaires
 
